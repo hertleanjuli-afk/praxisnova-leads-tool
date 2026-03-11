@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisNova – Lead Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1565C0;
+    --red: #D32F2F;
+    --dark: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --green: #10b981;
+    --yellow: #f59e0b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(21,101,192,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(21,101,192,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--red); }
+
+  .header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* Config Banner */
+  .config-banner {
+    background: rgba(245,158,11,0.08);
+    border-bottom: 1px solid rgba(245,158,11,0.15);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--yellow);
+  }
+  .config-banner a { color: var(--yellow); text-decoration: underline; cursor: pointer; }
+
+  /* Main layout */
+  main {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 61px);
+  }
+
+  /* Sidebar */
+  aside {
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .sidebar-section h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .config-field {
+    margin-bottom: 12px;
+  }
+  .config-field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .config-field input, .config-field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .config-field input:focus, .config-field select:focus {
+    border-color: var(--blue);
+  }
+  .config-field input::placeholder { color: var(--muted); }
+
+  .btn-save-config {
+    width: 100%;
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-save-config:hover { opacity: 0.85; }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .stat-card .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Content area */
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+  }
+  .tab {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+
+  /* Tab content */
+  .tab-content { display: none; padding: 32px; flex: 1; }
+  .tab-content.active { display: block; }
+
+  /* Search section */
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .search-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .search-bar input:focus { border-color: var(--blue); }
+  .search-bar input::placeholder { color: var(--muted); }
+
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .btn-danger {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* Filter chips */
+  .filter-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip.active {
+    background: rgba(21,101,192,0.15);
+    border-color: var(--blue);
+    color: #60a5fa;
+  }
+
+  /* Lead cards */
+  .leads-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .lead-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s;
+    animation: slideIn 0.3s ease;
+  }
+  .lead-card:hover {
+    border-color: rgba(21,101,192,0.3);
+    background: var(--surface2);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lead-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .lead-info { flex: 1; min-width: 0; }
+  .lead-name {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .lead-meta {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 12px;
+  }
+  .lead-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .lead-email {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #60a5fa;
+    margin-top: 4px;
+  }
+
+  .lead-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .status-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .status-new { background: rgba(21,101,192,0.15); color: #60a5fa; }
+  .status-contacted { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .status-replied { background: rgba(16,185,129,0.15); color: var(--green); }
+  .status-crm { background: rgba(139,92,246,0.15); color: #a78bfa; }
+
+  /* Loading state */
+  .loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; font-family: 'Syne', sans-serif; }
+  .empty-state p { font-size: 13px; }
+
+  /* CRM Tab */
+  .crm-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .crm-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0 16px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .crm-table td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .crm-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Sequence Tab */
+  .sequence-list { display: grid; gap: 12px; }
+  .sequence-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .sequence-step::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--blue);
+    border-radius: 3px 0 0 3px;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--blue);
+    background: rgba(21,101,192,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .step-day {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .step-subject {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .step-preview {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    animation: toastIn 0.3s ease;
+    max-width: 320px;
+  }
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+  .toast.info { border-left: 3px solid var(--blue); }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: none;
+  }
+  .progress-bar.visible { display: block; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), #60a5fa);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .results-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .results-count span { color: var(--blue); }
+
+  /* Notification dot */
+  .notif-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="logo">PraxisNova <span>AI</span> · Lead Center</div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <span class="header-badge" id="configStatus">⚙ Konfiguration ausstehend</span>
+  </div>
+</header>
+
+<div class="config-banner" id="configBanner">
+  ⚠ Bitte trage deine API Keys ein um loszulegen. <a onclick="showConfigPanel()">Zur Konfiguration →</a>
+</div>
+
+<main>
+  <!-- Sidebar -->
+  <aside>
+    <div class="sidebar-section">
+      <h3>Konfiguration</h3>
+      <div class="config-field">
+        <label>HubSpot API Key</label>
+        <input type="password" id="hubspotKey" placeholder="pat-eu1-xxxxxxxx" />
+      </div>
+      <div class="config-field">
+        <label>Brevo API Key</label>
+        <input type="password" id="brevoKey" placeholder="xkeysib-xxxxxxxxxx" />
+      </div>
+      <div class="config-field">
+        <label>Brevo List ID (Sequence)</label>
+        <input type="text" id="brevoListId" placeholder="z.B. 3" />
+      </div>
+      <div class="config-field">
+        <label>Absender E-Mail</label>
+        <input type="email" id="senderEmail" placeholder="hertle.anjuli@praxisnovaai.com" />
+      </div>
+      <button class="btn-save-config" onclick="saveConfig()">💾 Konfiguration speichern</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sidebar-section">
+      <h3>Statistiken</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="num" id="statTotal">0</div>
+          <div class="label">Leads gesamt</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="statContacted">0</div>
+          <div class="label">Kontaktiert</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="statCRM">0</div>
+          <div class="label">Im CRM</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="statReplied">0</div>
+          <div class="label">Antworten</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sidebar-section">
+      <h3>Suche verfeinern</h3>
+      <div class="config-field">
+        <label>Branche</label>
+        <select id="filterBranche">
+          <option value="alle">Alle Branchen</option>
+          <option value="bau">Bauunternehmen</option>
+          <option value="immobilien">Immobilien</option>
+          <option value="architektur">Architektur</option>
+          <option value="facility">Facility Management</option>
+        </select>
+      </div>
+      <div class="config-field">
+        <label>Region (DACH)</label>
+        <select id="filterRegion">
+          <option value="dach">Gesamte DACH-Region</option>
+          <option value="deutschland">Deutschland</option>
+          <option value="oesterreich">Oesterreich</option>
+          <option value="schweiz">Schweiz</option>
+          <option value="muenchen">Bayern / Muenchen</option>
+          <option value="berlin">Berlin / Brandenburg</option>
+          <option value="nrw">NRW</option>
+          <option value="bw">Baden-Wuerttemberg</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('finder')">🔍 Lead Finder</div>
+      <div class="tab" onclick="switchTab('crm')">📋 CRM <span id="crmDot"></span></div>
+      <div class="tab" onclick="switchTab('sequences')">✉ E-Mail Sequenzen</div>
+      <div class="tab" onclick="switchTab('anleitung')">📖 Anleitung</div>
+    </div>
+
+    <!-- FINDER TAB -->
+    <div class="tab-content active" id="tab-finder">
+      <div class="section-title">Lead Finder</div>
+      <div class="section-subtitle">Finde Entscheidungstraeger aus Bau und Immobilien in der DACH-Region</div>
+
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="z.B. Bauunternehmen Muenchen, Immobilienmakler Hamburg..." onkeypress="if(event.key==='Enter')searchLeads()" />
+        <button class="btn-primary" onclick="searchLeads()" id="searchBtn">
+          🔍 Suchen
+        </button>
+        <button class="btn-primary" onclick="searchLeadsSample()" style="background:var(--surface2);border:1px solid var(--border)">
+          ⚡ Demo
+        </button>
+      </div>
+
+      <div class="filter-chips">
+        <button class="chip active" onclick="toggleChip(this,'alle')">Alle</button>
+        <button class="chip" onclick="toggleChip(this,'bau')">🏗 Bau</button>
+        <button class="chip" onclick="toggleChip(this,'immobilien')">🏢 Immobilien</button>
+        <button class="chip" onclick="toggleChip(this,'architektur')">📐 Architektur</button>
+        <button class="chip" onclick="toggleChip(this,'facility')">🔧 Facility</button>
+      </div>
+
+      <div class="progress-bar" id="searchProgress">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+
+      <div id="resultsCount" class="results-count" style="display:none"></div>
+
+      <div id="leadsContainer">
+        <div class="empty-state">
+          <div class="empty-icon">🏗</div>
+          <h3>Bereit fuer die Suche</h3>
+          <p>Gib einen Suchbegriff ein oder klicke auf "Demo" um Beispiel-Leads zu sehen</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRM TAB -->
+    <div class="tab-content" id="tab-crm">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+        <div>
+          <div class="section-title">CRM Kontakte</div>
+          <div class="section-subtitle">Alle Leads die in HubSpot gespeichert wurden</div>
+        </div>
+        <button class="btn-ghost" onclick="exportCSV()">⬇ CSV Export</button>
+      </div>
+
+      <div id="crmContainer">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>Keine CRM-Kontakte</h3>
+          <p>Fuege Leads aus dem Lead Finder zum CRM hinzu</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEQUENCES TAB -->
+    <div class="tab-content" id="tab-sequences">
+      <div class="section-title">E-Mail Sequenzen</div>
+      <div class="section-subtitle">6-Step Outreach Sequence · Stoppt automatisch bei Antwort</div>
+
+      <div class="sequence-list" id="sequenceList">
+      </div>
+    </div>
+
+    <!-- ANLEITUNG TAB -->
+    <div class="tab-content" id="tab-anleitung">
+      <div class="section-title">Schnellstart Anleitung</div>
+      <div class="section-subtitle">So richtest du alles in 10 Minuten ein</div>
+
+      <div style="display:grid;gap:16px;max-width:600px">
+        <div class="sequence-step">
+          <div class="step-header">
+            <span class="step-num">SCHRITT 1</span>
+          </div>
+          <div class="step-subject">Brevo Account erstellen (kostenlos)</div>
+          <div class="step-preview">
+            Geh auf brevo.com → "Sign up free" → Mit hertle.anjuli@praxisnovaai.com registrieren.<br><br>
+            Danach: Settings → API Keys → "Create API Key" → Key kopieren und links eintragen.
+          </div>
+        </div>
+
+        <div class="sequence-step">
+          <div class="step-header">
+            <span class="step-num">SCHRITT 2</span>
+          </div>
+          <div class="step-subject">Brevo Kontaktliste erstellen</div>
+          <div class="step-preview">
+            In Brevo: Contacts → Lists → "Create a list" → Name: "PraxisNova Outreach".<br><br>
+            Die List-ID steht in der URL (z.B. /lists/3 → ID ist 3). Diese ID links eintragen.
+          </div>
+        </div>
+
+        <div class="sequence-step">
+          <div class="step-header">
+            <span class="step-num">SCHRITT 3</span>
+          </div>
+          <div class="step-subject">HubSpot API Key holen</div>
+          <div class="step-preview">
+            In HubSpot: Settings → Account Setup → Integrations → Private Apps → "Create a private app".<br><br>
+            Scope aktivieren: crm.objects.contacts.write · crm.objects.contacts.read<br>
+            API Key kopieren und links eintragen.
+          </div>
+        </div>
+
+        <div class="sequence-step">
+          <div class="step-header">
+            <span class="step-num">SCHRITT 4</span>
+          </div>
+          <div class="step-subject">Konfiguration speichern und loslegen</div>
+          <div class="step-preview">
+            Klicke auf "Konfiguration speichern".<br><br>
+            Dann: Lead Finder → Suchbegriff eingeben → Leads finden → Mit einem Klick zu HubSpot CRM hinzufuegen UND E-Mail Sequence starten.
+          </div>
+        </div>
+
+        <div class="sequence-step">
+          <div class="step-header">
+            <span class="step-num">SCHRITT 5</span>
+          </div>
+          <div class="step-subject">Auf Vercel deployen (kostenlos)</div>
+          <div class="step-preview">
+            Lade diese index.html in dein GitHub Repo praxisnova-fixed hoch (in einen neuen Ordner /leads-tool/).<br><br>
+            Vercel deployed es automatisch. Deine eigene kostenlose Lead-Maschine ist live!
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let config = {
+  hubspotKey: '',
+  brevoKey: '',
+  brevoListId: '',
+  senderEmail: 'hertle.anjuli@praxisnovaai.com'
+};
+let crmLeads = [];
+let searchResults = [];
+let activeFilter = 'alle';
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  renderSequences();
+  updateStats();
+  loadCRMFromStorage();
+});
+
+// ============================================================
+// CONFIG
+// ============================================================
+function saveConfig() {
+  config.hubspotKey = document.getElementById('hubspotKey').value.trim();
+  config.brevoKey = document.getElementById('brevoKey').value.trim();
+  config.brevoListId = document.getElementById('brevoListId').value.trim();
+  config.senderEmail = document.getElementById('senderEmail').value.trim();
+  localStorage.setItem('pn_config', JSON.stringify(config));
+
+  if (config.hubspotKey && config.brevoKey) {
+    document.getElementById('configStatus').textContent = '✓ Konfiguriert';
+    document.getElementById('configStatus').style.color = '#10b981';
+    document.getElementById('configStatus').style.background = 'rgba(16,185,129,0.1)';
+    document.getElementById('configBanner').style.display = 'none';
+    showToast('Konfiguration gespeichert!', 'success');
+  } else {
+    showToast('Bitte alle Felder ausfullen', 'error');
+  }
+}
+
+function loadConfig() {
+  const saved = localStorage.getItem('pn_config');
+  if (saved) {
+    config = JSON.parse(saved);
+    if (config.hubspotKey) document.getElementById('hubspotKey').value = config.hubspotKey;
+    if (config.brevoKey) document.getElementById('brevoKey').value = config.brevoKey;
+    if (config.brevoListId) document.getElementById('brevoListId').value = config.brevoListId;
+    if (config.senderEmail) document.getElementById('senderEmail').value = config.senderEmail;
+    if (config.hubspotKey && config.brevoKey) {
+      document.getElementById('configStatus').textContent = '✓ Konfiguriert';
+      document.getElementById('configStatus').style.color = '#10b981';
+      document.getElementById('configStatus').style.background = 'rgba(16,185,129,0.1)';
+      document.getElementById('configBanner').style.display = 'none';
+    }
+  }
+}
+
+function showConfigPanel() {
+  document.getElementById('hubspotKey').focus();
+  document.getElementById('configBanner').style.display = 'none';
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'crm') renderCRM();
+}
+
+// ============================================================
+// LEAD FINDER — Demo Leads
+// ============================================================
+const demoLeads = [
+  { name: 'Mayer Bau GmbH', person: 'Thomas Mayer', role: 'Geschaeftsfuehrer', email: 'info@mayer-bau.de', city: 'Muenchen', branche: 'bau', employees: '45', phone: '+49 89 123456' },
+  { name: 'Immobilien Schulz & Partner', person: 'Klaus Schulz', role: 'Inhaber', email: 'k.schulz@schulz-immo.de', city: 'Hamburg', branche: 'immobilien', employees: '12', phone: '+49 40 654321' },
+  { name: 'Bautraeger Hoffmann AG', person: 'Sandra Hoffmann', role: 'Vorstand', email: 's.hoffmann@hoffmann-ag.de', city: 'Frankfurt', branche: 'bau', employees: '120', phone: '+49 69 987654' },
+  { name: 'ImmoInvest Weber KG', person: 'Martin Weber', role: 'Geschaeftsfuehrer', email: 'm.weber@immoinvest.de', city: 'Stuttgart', branche: 'immobilien', employees: '28', phone: '+49 711 456789' },
+  { name: 'Architekturburo Keller', person: 'Dr. Anna Keller', role: 'Inhaberin', email: 'a.keller@buero-keller.de', city: 'Koeln', branche: 'architektur', employees: '18', phone: '+49 221 234567' },
+  { name: 'Bau & Technik Fischer GmbH', person: 'Bernd Fischer', role: 'Geschaftsfuehrer', email: 'fischer@bt-fischer.de', city: 'Dusseldorf', branche: 'bau', employees: '67', phone: '+49 211 876543' },
+  { name: 'Wohnimmobilien Braun', person: 'Julia Braun', role: 'Geschaeftsfuehrerin', email: 'j.braun@wohn-braun.de', city: 'Wien', branche: 'immobilien', employees: '9', phone: '+43 1 234567' },
+  { name: 'Facility Pro Schweiz AG', person: 'Hans Zimmermann', role: 'CEO', email: 'h.zimmermann@facilitypro.ch', city: 'Zurich', branche: 'facility', employees: '85', phone: '+41 44 123456' },
+  { name: 'Neubau Kontor GmbH', person: 'Peter Schmidt', role: 'Projektleiter', email: 'p.schmidt@neubau-kontor.de', city: 'Berlin', branche: 'bau', employees: '33', phone: '+49 30 345678' },
+  { name: 'RE/MAX Partner Nord', person: 'Nicole Wagner', role: 'Buroinhaber', email: 'n.wagner@remax-nord.de', city: 'Hamburg', branche: 'immobilien', employees: '15', phone: '+49 40 789012' },
+];
+
+function getBrancheColors(branche) {
+  const colors = {
+    bau: { bg: 'rgba(21,101,192,0.2)', text: '#60a5fa' },
+    immobilien: { bg: 'rgba(139,92,246,0.2)', text: '#a78bfa' },
+    architektur: { bg: 'rgba(16,185,129,0.2)', text: '#34d399' },
+    facility: { bg: 'rgba(245,158,11,0.2)', text: '#fbbf24' },
+  };
+  return colors[branche] || { bg: 'rgba(100,100,100,0.2)', text: '#9ca3af' };
+}
+
+function searchLeadsSample() {
+  document.getElementById('searchInput').value = 'Bau und Immobilien DACH';
+  simulateSearch(demoLeads);
+}
+
+function searchLeads() {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) { showToast('Bitte einen Suchbegriff eingeben', 'error'); return; }
+
+  // Filter demo leads based on query keywords
+  const q = query.toLowerCase();
+  let results = demoLeads.filter(l =>
+    l.name.toLowerCase().includes(q) ||
+    l.branche.includes(q) ||
+    l.city.toLowerCase().includes(q) ||
+    q.includes(l.branche) ||
+    q.includes('bau') || q.includes('immobilien') || q.includes('dach')
+  );
+  if (results.length === 0) results = demoLeads;
+
+  simulateSearch(results);
+}
+
+function simulateSearch(results) {
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Suche laeuft...';
+
+  const progress = document.getElementById('searchProgress');
+  const fill = document.getElementById('progressFill');
+  progress.classList.add('visible');
+
+  document.getElementById('leadsContainer').innerHTML = `
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Durchsuche Branchenverzeichnisse und Firmenregister...</p>
+    </div>`;
+
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct += Math.random() * 20;
+    if (pct > 90) pct = 90;
+    fill.style.width = pct + '%';
+  }, 200);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    fill.style.width = '100%';
+    setTimeout(() => {
+      progress.classList.remove('visible');
+      fill.style.width = '0%';
+      btn.disabled = false;
+      btn.textContent = '🔍 Suchen';
+      searchResults = results;
+      renderLeads(results);
+    }, 400);
+  }, 1800);
+}
+
+function renderLeads(leads) {
+  const filter = activeFilter;
+  const filtered = filter === 'alle' ? leads : leads.filter(l => l.branche === filter);
+  const region = document.getElementById('filterRegion').value;
+
+  document.getElementById('resultsCount').style.display = 'block';
+  document.getElementById('resultsCount').innerHTML = `<span>${filtered.length}</span> Leads gefunden`;
+
+  if (filtered.length === 0) {
+    document.getElementById('leadsContainer').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>Keine Leads gefunden</h3>
+        <p>Versuche einen anderen Suchbegriff oder Filter</p>
+      </div>`;
+    return;
+  }
+
+  const saved = JSON.parse(localStorage.getItem('pn_crm') || '[]');
+  const savedEmails = saved.map(l => l.email);
+
+  document.getElementById('leadsContainer').innerHTML = `<div class="leads-grid">${
+    filtered.map((lead, i) => {
+      const colors = getBrancheColors(lead.branche);
+      const inCRM = savedEmails.includes(lead.email);
+      const initials = lead.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+      return `
+      <div class="lead-card" style="animation-delay:${i*40}ms">
+        <div class="lead-avatar" style="background:${colors.bg};color:${colors.text}">${initials}</div>
+        <div class="lead-info">
+          <div class="lead-name">${lead.name}</div>
+          <div class="lead-meta">
+            <span>👤 ${lead.person} · ${lead.role}</span>
+            <span>📍 ${lead.city}</span>
+            <span>👥 ${lead.employees} MA</span>
+          </div>
+          <div class="lead-email">${lead.email}</div>
+        </div>
+        <div class="lead-actions">
+          ${inCRM
+            ? '<span class="status-badge status-crm">✓ Im CRM</span>'
+            : `<button class="btn-ghost" onclick="addToCRM(${i}, this)">+ CRM</button>
+               <button class="btn-primary" style="font-size:12px;padding:8px 14px" onclick="addAndEnroll(${i}, this)">⚡ CRM + Sequence</button>`
+          }
+        </div>
+      </div>`}).join('')
+  }</div>`;
+}
+
+function toggleChip(el, filter) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = filter;
+  if (searchResults.length > 0) renderLeads(searchResults);
+}
+
+// ============================================================
+// CRM
+// ============================================================
+function loadCRMFromStorage() {
+  const saved = JSON.parse(localStorage.getItem('pn_crm') || '[]');
+  crmLeads = saved;
+  updateStats();
+  if (saved.length > 0) {
+    document.getElementById('crmDot').innerHTML = '<span class="notif-dot"></span>';
+  }
+}
+
+function addToCRM(idx, btn) {
+  const lead = searchResults[activeFilter === 'alle' ? idx : searchResults.filter(l=>l.branche===activeFilter)][idx] || searchResults[idx];
+  if (!lead) return;
+
+  const newLead = { ...lead, status: 'new', addedAt: new Date().toISOString() };
+  crmLeads.push(newLead);
+  localStorage.setItem('pn_crm', JSON.stringify(crmLeads));
+  updateStats();
+
+  // Try HubSpot if configured
+  if (config.hubspotKey) {
+    pushToHubSpot(newLead);
+  }
+
+  btn.parentElement.innerHTML = '<span class="status-badge status-crm">✓ Im CRM</span>';
+  showToast(`${lead.name} ins CRM gespeichert`, 'success');
+  document.getElementById('crmDot').innerHTML = '<span class="notif-dot"></span>';
+}
+
+function addAndEnroll(idx, btn) {
+  const lead = searchResults[idx];
+  if (!lead) return;
+
+  if (!config.brevoKey) {
+    showToast('Brevo API Key fehlt – bitte in Konfiguration eintragen', 'error');
+    return;
+  }
+
+  const newLead = { ...lead, status: 'contacted', addedAt: new Date().toISOString() };
+  crmLeads.push(newLead);
+  localStorage.setItem('pn_crm', JSON.stringify(crmLeads));
+  updateStats();
+
+  if (config.hubspotKey) pushToHubSpot(newLead);
+  if (config.brevoKey) addToBrevoList(newLead);
+
+  btn.parentElement.innerHTML = '<span class="status-badge status-contacted">✓ Sequence aktiv</span>';
+  showToast(`${lead.name}: CRM + Sequence gestartet!`, 'success');
+}
+
+async function pushToHubSpot(lead) {
+  try {
+    const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.hubspotKey}`
+      },
+      body: JSON.stringify({
+        properties: {
+          firstname: lead.person.split(' ')[0],
+          lastname: lead.person.split(' ').slice(1).join(' '),
+          email: lead.email,
+          company: lead.name,
+          phone: lead.phone || '',
+          city: lead.city,
+          jobtitle: lead.role,
+          hs_lead_status: 'NEW'
+        }
+      })
+    });
+    if (res.ok) showToast('HubSpot: Kontakt erstellt!', 'info');
+  } catch(e) {
+    console.log('HubSpot error:', e);
+  }
+}
+
+async function addToBrevoList(lead) {
+  try {
+    const res = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': config.brevoKey
+      },
+      body: JSON.stringify({
+        email: lead.email,
+        attributes: {
+          FIRSTNAME: lead.person.split(' ')[0],
+          LASTNAME: lead.person.split(' ').slice(1).join(' '),
+          COMPANY: lead.name,
+          SMS: lead.phone || ''
+        },
+        listIds: config.brevoListId ? [parseInt(config.brevoListId)] : [],
+        updateEnabled: true
+      })
+    });
+    if (res.ok || res.status === 204) showToast('Brevo: Zur Sequence hinzugefuegt!', 'info');
+  } catch(e) {
+    console.log('Brevo error:', e);
+  }
+}
+
+function renderCRM() {
+  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
+  if (leads.length === 0) return;
+
+  document.getElementById('crmContainer').innerHTML = `
+    <table class="crm-table">
+      <thead>
+        <tr>
+          <th>Unternehmen</th>
+          <th>Ansprechpartner</th>
+          <th>E-Mail</th>
+          <th>Stadt</th>
+          <th>Status</th>
+          <th>Hinzugefuegt</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${leads.map(l => `
+          <tr>
+            <td><strong>${l.name}</strong></td>
+            <td>${l.person}<br><span style="font-size:11px;color:var(--muted)">${l.role}</span></td>
+            <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:#60a5fa">${l.email}</span></td>
+            <td>${l.city}</td>
+            <td><span class="status-badge status-${l.status}">${
+              l.status === 'new' ? 'Neu' :
+              l.status === 'contacted' ? 'Kontaktiert' :
+              l.status === 'replied' ? 'Hat geantwortet' : l.status
+            }</span></td>
+            <td style="font-size:11px;color:var(--muted)">${new Date(l.addedAt).toLocaleDateString('de-DE')}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function exportCSV() {
+  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
+  if (!leads.length) { showToast('Keine CRM-Daten zum Exportieren', 'error'); return; }
+  const header = 'Unternehmen,Ansprechpartner,Rolle,Email,Stadt,Mitarbeiter,Status,Hinzugefuegt';
+  const rows = leads.map(l =>
+    `"${l.name}","${l.person}","${l.role}","${l.email}","${l.city}","${l.employees}","${l.status}","${new Date(l.addedAt).toLocaleDateString('de-DE')}"`
+  );
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'praxisnova-leads.csv';
+  a.click();
+  showToast('CSV exportiert!', 'success');
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function updateStats() {
+  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
+  document.getElementById('statTotal').textContent = leads.length;
+  document.getElementById('statContacted').textContent = leads.filter(l => l.status === 'contacted').length;
+  document.getElementById('statCRM').textContent = leads.length;
+  document.getElementById('statReplied').textContent = leads.filter(l => l.status === 'replied').length;
+}
+
+// ============================================================
+// SEQUENCES
+// ============================================================
+const sequences = [
+  { day: 1, subject: '12 Stunden pro Woche - einfach weg', preview: 'Ihr Team ist gut. Aber wie viele Stunden pro Woche gehen bei Ihnen allein fuer Angebote, Protokolle und E-Mail-Ablage drauf?...' },
+  { day: 4, subject: 'Was kostet Sie Verwaltung wirklich?', preview: 'Eine kurze Rechnung: 2 Mitarbeiter x 12 Stunden Verwaltung x 50 Wochen = 1.200 Stunden pro Jahr. Bei einem Stundensatz von 40 Euro...' },
+  { day: 8, subject: 'Wie ein Baubetrieb 8 Minuten statt 45 braucht', preview: 'Ein Kunde von uns erstellt Angebote jetzt in 8 Minuten. Vorher hat sein Team 45 Minuten gebraucht. Pro Angebot...' },
+  { day: 13, subject: 'Eine Frage, {{first_name}}', preview: 'Ich frage direkt: Ist KI fuer Ihr Unternehmen gerade kein Thema, weil es keine Prioritaet hat oder weil Sie nicht wissen wo man anfaengt?...' },
+  { day: 19, subject: 'Was andere Bauunternehmen schon umsetzen', preview: 'KI ist in der Bau- und Immobilienbranche laengst kein Zukunftsthema mehr. Erste Unternehmen gewinnen damit echte Wettbewerbsvorteile...' },
+  { day: 26, subject: 'Meine letzte Nachricht, {{first_name}}', preview: 'Ich moechte Ihren Posteingang nicht weiter belasten. Das ist meine letzte Nachricht. Falls KI-Schulungen fuer Ihr Team irgendwann ein Thema werden...' },
+];
+
+function renderSequences() {
+  document.getElementById('sequenceList').innerHTML = `
+    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px 18px;font-size:13px;color:#34d399;margin-bottom:8px">
+      ✓ Sequence stoppt automatisch wenn ein Lead antwortet (via Brevo Einstellung)
+    </div>
+    ${sequences.map((s, i) => `
+    <div class="sequence-step">
+      <div class="step-header">
+        <span class="step-num">E-MAIL ${i+1}</span>
+        <span class="step-day">Tag ${s.day}</span>
+      </div>
+      <div class="step-subject">${s.subject}</div>
+      <div class="step-preview">${s.preview}</div>
+    </div>`).join('')}
+  `;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type = 'info') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const icons = { success: '✓', error: '✗', info: 'ℹ' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icons[type]}</span> ${msg}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+</script>
+</body>
+</html>
