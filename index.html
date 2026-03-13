@@ -3,547 +3,640 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PraxisNova – Lead Command Center</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>PraxisNova — Sales Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --blue: #1565C0;
-    --red: #D32F2F;
-    --dark: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --green: #10b981;
-    --yellow: #f59e0b;
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a38;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --font: 'Syne', sans-serif;
+    --mono: 'DM Mono', monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--dark);
+    background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font);
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* Background grid */
+  /* GRID BACKGROUND */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(21,101,192,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(21,101,192,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(108,99,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,.03) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
   }
 
-  .app { position: relative; z-index: 1; }
-
-  /* Header */
+  /* HEADER */
   header {
+    position: relative;
+    z-index: 10;
+    padding: 20px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 32px;
     border-bottom: 1px solid var(--border);
-    background: rgba(10,14,26,0.8);
+    background: rgba(10,10,15,.8);
     backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
   }
 
   .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.5px;
-  }
-  .logo span { color: var(--red); }
-
-  .header-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--green);
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.2);
-    padding: 4px 10px;
-    border-radius: 20px;
-  }
-
-  /* Config Banner */
-  .config-banner {
-    background: rgba(245,158,11,0.08);
-    border-bottom: 1px solid rgba(245,158,11,0.15);
-    padding: 12px 32px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--yellow);
-  }
-  .config-banner a { color: var(--yellow); text-decoration: underline; cursor: pointer; }
-
-  /* Main layout */
-  main {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    min-height: calc(100vh - 61px);
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
   }
 
-  /* Sidebar */
-  aside {
-    border-right: 1px solid var(--border);
-    padding: 24px;
+  .logo-dot {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 12px var(--accent); }
+    50% { box-shadow: 0 0 24px var(--accent), 0 0 40px var(--accent); }
+  }
+
+  .status-bar {
     display: flex;
-    flex-direction: column;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent3);
+    box-shadow: 0 0 6px var(--accent3);
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto 1fr;
     gap: 24px;
   }
 
-  .sidebar-section h3 {
-    font-family: 'DM Mono', monospace;
+  /* SECTION TITLE */
+  .section-label {
+    font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 2px;
-    color: var(--muted);
     text-transform: uppercase;
+    color: var(--accent);
     margin-bottom: 12px;
   }
 
-  .config-field {
-    margin-bottom: 12px;
-  }
-  .config-field label {
-    display: block;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .config-field input, .config-field select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .config-field input:focus, .config-field select:focus {
-    border-color: var(--blue);
-  }
-  .config-field input::placeholder { color: var(--muted); }
-
-  .btn-save-config {
-    width: 100%;
-    background: var(--blue);
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .btn-save-config:hover { opacity: 0.85; }
-
-  /* Stats */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .stat-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-  }
-  .stat-card .num {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--blue);
-  }
-  .stat-card .label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  /* Content area */
-  .content {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-  }
-  .tab {
-    padding: 16px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
-
-  /* Tab content */
-  .tab-content { display: none; padding: 32px; flex: 1; }
-  .tab-content.active { display: block; }
-
-  /* Search section */
-  .search-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .search-bar input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .search-bar input:focus { border-color: var(--blue); }
-  .search-bar input::placeholder { color: var(--muted); }
-
-  .btn-primary {
-    background: var(--blue);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .btn-danger {
-    background: var(--red);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
-  }
-  .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
-
-  /* Filter chips */
-  .filter-chips {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .chip {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    transition: all 0.2s;
-    background: transparent;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .chip.active {
-    background: rgba(21,101,192,0.15);
-    border-color: var(--blue);
-    color: #60a5fa;
-  }
-
-  /* Lead cards */
-  .leads-grid {
-    display: grid;
-    gap: 12px;
-  }
-
-  .lead-card {
+  /* CARDS */
+  .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 24px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    transition: all 0.2s;
-    animation: slideIn 0.3s ease;
-  }
-  .lead-card:hover {
-    border-color: rgba(21,101,192,0.3);
-    background: var(--surface2);
+    gap: 8px;
   }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+  /* CONFIG PANEL */
+  .config-panel {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  .lead-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(108,99,255,.15);
+  }
+
+  select option { background: var(--surface); }
+
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* TAGS */
+  .tag-input-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 44px;
+    cursor: text;
+  }
+
+  .tag {
+    background: rgba(108,99,255,.15);
+    border: 1px solid rgba(108,99,255,.3);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tag-remove {
+    cursor: pointer;
+    opacity: .6;
+    transition: opacity .2s;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .tag-remove:hover { opacity: 1; color: var(--accent2); }
+
+  .tag-input {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    flex: 1;
+    min-width: 80px;
+    padding: 2px 4px;
+  }
+
+  /* BUTTONS */
+  .btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .lead-info { flex: 1; min-width: 0; }
-  .lead-name {
-    font-weight: 500;
-    font-size: 14px;
-    margin-bottom: 2px;
-  }
-  .lead-meta {
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    gap: 12px;
-  }
-  .lead-meta span { display: flex; align-items: center; gap: 4px; }
-
-  .lead-email {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: #60a5fa;
-    margin-top: 4px;
-  }
-
-  .lead-actions {
-    display: flex;
     gap: 8px;
-    align-items: center;
-  }
-
-  .status-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-  .status-new { background: rgba(21,101,192,0.15); color: #60a5fa; }
-  .status-contacted { background: rgba(245,158,11,0.15); color: var(--yellow); }
-  .status-replied { background: rgba(16,185,129,0.15); color: var(--green); }
-  .status-crm { background: rgba(139,92,246,0.15); color: #a78bfa; }
-
-  /* Loading state */
-  .loading-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-  .spinner {
-    width: 32px;
-    height: 32px;
-    border: 2px solid var(--border);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-  .empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; font-family: 'Syne', sans-serif; }
-  .empty-state p { font-size: 13px; }
-
-  /* CRM Tab */
-  .crm-table {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
     width: 100%;
-    border-collapse: collapse;
   }
-  .crm-table th {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: left;
-    padding: 0 16px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .crm-table td {
-    padding: 14px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .crm-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-  /* Sequence Tab */
-  .sequence-list { display: grid; gap: 12px; }
-  .sequence-step {
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(108,99,255,.3);
+  }
+
+  .btn-primary:hover {
+    background: #7c75ff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(108,99,255,.45);
+  }
+
+  .btn-primary:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: rgba(255,101,132,.1);
+    color: var(--accent2);
+    border: 1px solid rgba(255,101,132,.3);
+  }
+
+  .btn-danger:hover { background: rgba(255,101,132,.2); }
+
+  /* STATS ROW */
+  .stats-row {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
     position: relative;
+    overflow: hidden;
   }
-  .sequence-step::before {
+
+  .stat-card::after {
     content: '';
     position: absolute;
-    left: -1px;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--blue);
-    border-radius: 3px 0 0 3px;
+    top: 0; left: 0; right: 0;
+    height: 2px;
   }
-  .step-header {
+
+  .stat-card.c1::after { background: var(--accent); }
+  .stat-card.c2::after { background: var(--accent3); }
+  .stat-card.c3::after { background: #f093fb; }
+  .stat-card.c4::after { background: #fda085; }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* LEAD TABLE */
+  .lead-panel {
+    grid-column: 2;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .lead-panel-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .step-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--blue);
-    background: rgba(21,101,192,0.1);
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-  .step-day {
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .step-subject {
-    font-weight: 500;
-    font-size: 14px;
-    margin-bottom: 6px;
-  }
-  .step-preview {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.6;
   }
 
-  /* Toast */
-  .toast {
+  .lead-panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge {
+    background: rgba(108,99,255,.15);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .lead-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-sm {
+    padding: 7px 14px;
+    font-size: 12px;
+    width: auto;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    background: var(--surface2);
+    z-index: 2;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(42,42,56,.5);
+    vertical-align: middle;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tr:hover td { background: rgba(108,99,255,.04); }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .pill-new { background: rgba(108,99,255,.15); color: var(--accent); }
+  .pill-pushed { background: rgba(67,233,123,.12); color: var(--accent3); }
+  .pill-sequence { background: rgba(253,160,133,.12); color: #fda085; }
+  .pill-replied { background: rgba(255,101,132,.12); color: var(--accent2); }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 2px;
+    transition: width .5s ease;
+  }
+
+  /* LOG */
+  .log-panel {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    max-height: 150px;
+    overflow-y: auto;
+    margin-top: 16px;
+  }
+
+  .log-line {
+    line-height: 1.8;
+    border-bottom: 1px solid rgba(42,42,56,.3);
+    padding-bottom: 2px;
+    animation: fadeIn .3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .log-line.ok { color: var(--accent3); }
+  .log-line.err { color: var(--accent2); }
+  .log-line.info { color: var(--muted); }
+  .log-line.warn { color: #fda085; }
+
+  /* SPINNER */
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+
+  .spinning .spinner { display: block; }
+  .spinning .btn-icon { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 2px;
+    padding: 16px 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    color: var(--muted);
+    transition: all .2s;
+    border: 1px solid transparent;
+    border-bottom: none;
+    position: relative;
+    bottom: -1px;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+    border-bottom-color: var(--surface);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SEQUENCES */
+  .seq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+  }
+
+  .seq-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color .2s;
+  }
+
+  .seq-item:hover { border-color: rgba(108,99,255,.4); }
+
+  .seq-day {
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  .seq-info { flex: 1; }
+
+  .seq-subject {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .seq-preview {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    opacity: .4;
+  }
+
+  .empty-text {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  /* TOAST */
+  .toast-wrap {
     position: fixed;
     bottom: 24px;
     right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .toast {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 20px;
+    border-radius: 10px;
+    padding: 12px 16px;
     font-size: 13px;
+    font-family: var(--mono);
     display: flex;
     align-items: center;
-    gap: 10px;
-    z-index: 1000;
-    animation: toastIn 0.3s ease;
+    gap: 8px;
+    animation: slideUp .3s ease;
     max-width: 320px;
-  }
-  .toast.success { border-left: 3px solid var(--green); }
-  .toast.error { border-left: 3px solid var(--red); }
-  .toast.info { border-left: 3px solid var(--blue); }
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
   }
 
-  /* Progress bar */
-  .progress-bar {
-    height: 3px;
-    background: var(--surface2);
-    border-radius: 3px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    display: none;
-  }
-  .progress-bar.visible { display: block; }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--blue), #60a5fa);
-    border-radius: 3px;
-    transition: width 0.3s ease;
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
   }
 
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .section-subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
+  .toast.ok { border-color: rgba(67,233,123,.3); }
+  .toast.err { border-color: rgba(255,101,132,.3); }
 
-  .results-count {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-  .results-count span { color: var(--blue); }
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* Notification dot */
-  .notif-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--red);
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 6px;
-    vertical-align: middle;
+  /* INBOUND SECTION */
+  .inbound-card {
+    background: linear-gradient(135deg, rgba(67,233,123,.05), rgba(108,99,255,.05));
+    border: 1px solid rgba(67,233,123,.2);
   }
 
   .divider {
@@ -552,674 +645,762 @@
     margin: 16px 0;
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .api-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .api-ok { color: var(--accent3); }
+  .api-err { color: var(--accent2); }
+
+  /* CHECKBOX */
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .checkbox-label input { width: auto; }
 </style>
 </head>
 <body>
-<div class="app">
 
 <header>
-  <div class="logo">PraxisNova <span>AI</span> · Lead Center</div>
-  <div style="display:flex;gap:12px;align-items:center">
-    <span class="header-badge" id="configStatus">⚙ Konfiguration ausstehend</span>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    PraxisNova <span style="color:var(--muted);font-weight:400">/ Sales Automation</span>
+  </div>
+  <div class="status-bar">
+    <div class="status-item"><div class="status-dot"></div> Google Places</div>
+    <div class="status-item"><div class="status-dot"></div> HubSpot</div>
+    <div class="status-item"><div class="status-dot"></div> Brevo</div>
+    <div class="status-item" style="color:var(--muted)"><div class="status-dot" style="background:var(--muted);box-shadow:none"></div> Vercel Webhook</div>
   </div>
 </header>
 
-<div class="config-banner" id="configBanner">
-  ⚠ Bitte trage deine API Keys ein um loszulegen. <a onclick="showConfigPanel()">Zur Konfiguration →</a>
-</div>
-
 <main>
-  <!-- Sidebar -->
-  <aside>
-    <div class="sidebar-section">
-      <h3>Konfiguration</h3>
-      <div class="config-field">
-        <label>HubSpot API Key</label>
-        <input type="password" id="hubspotKey" placeholder="pat-eu1-xxxxxxxx" />
-      </div>
-      <div class="config-field">
-        <label>Brevo API Key</label>
-        <input type="password" id="brevoKey" placeholder="xkeysib-xxxxxxxxxx" />
-      </div>
-      <div class="config-field">
-        <label>Brevo List ID (Sequence)</label>
-        <input type="text" id="brevoListId" placeholder="z.B. 3" />
-      </div>
-      <div class="config-field">
-        <label>Absender E-Mail</label>
-        <input type="email" id="senderEmail" placeholder="hertle.anjuli@praxisnovaai.com" />
-      </div>
-      <button class="btn-save-config" onclick="saveConfig()">💾 Konfiguration speichern</button>
-    </div>
 
-    <div class="divider"></div>
+  <!-- CONFIG PANEL -->
+  <aside class="config-panel">
 
-    <div class="sidebar-section">
-      <h3>Statistiken</h3>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="num" id="statTotal">0</div>
-          <div class="label">Leads gesamt</div>
-        </div>
-        <div class="stat-card">
-          <div class="num" id="statContacted">0</div>
-          <div class="label">Kontaktiert</div>
-        </div>
-        <div class="stat-card">
-          <div class="num" id="statCRM">0</div>
-          <div class="label">Im CRM</div>
-        </div>
-        <div class="stat-card">
-          <div class="num" id="statReplied">0</div>
-          <div class="label">Antworten</div>
+    <!-- SEARCH CONFIG -->
+    <div class="card">
+      <div class="section-label">01 — Lead-Suche</div>
+      <div class="card-title">🔍 Google Places API</div>
+
+      <div class="form-group">
+        <label>Branche / Keyword</label>
+        <div class="tag-input-wrap" id="keywordWrap">
+          <span class="tag">Bauunternehmen <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+          <span class="tag">Architekturbüro <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+          <span class="tag">Immobilien <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+          <input class="tag-input" placeholder="+ Keyword, Enter" id="keywordInput" onkeydown="addTag(event,'keywordWrap')">
         </div>
       </div>
-    </div>
 
-    <div class="divider"></div>
-
-    <div class="sidebar-section">
-      <h3>Suche verfeinern</h3>
-      <div class="config-field">
-        <label>Branche</label>
-        <select id="filterBranche">
-          <option value="alle">Alle Branchen</option>
-          <option value="bau">Bauunternehmen</option>
-          <option value="immobilien">Immobilien</option>
-          <option value="architektur">Architektur</option>
-          <option value="facility">Facility Management</option>
+      <div class="form-group">
+        <label>Region</label>
+        <select id="region">
+          <option value="Deutschland">Deutschland (gesamt)</option>
+          <option value="Bayern">Bayern</option>
+          <option value="Baden-Württemberg" selected>Baden-Württemberg</option>
+          <option value="NRW">Nordrhein-Westfalen</option>
+          <option value="Hessen">Hessen</option>
+          <option value="Österreich">Österreich</option>
+          <option value="Schweiz">Schweiz</option>
         </select>
       </div>
-      <div class="config-field">
-        <label>Region (DACH)</label>
-        <select id="filterRegion">
-          <option value="dach">Gesamte DACH-Region</option>
-          <option value="deutschland">Deutschland</option>
-          <option value="oesterreich">Oesterreich</option>
-          <option value="schweiz">Schweiz</option>
-          <option value="muenchen">Bayern / Muenchen</option>
-          <option value="berlin">Berlin / Brandenburg</option>
-          <option value="nrw">NRW</option>
-          <option value="bw">Baden-Wuerttemberg</option>
-        </select>
+
+      <div class="form-group">
+        <label>Leads pro Durchlauf</label>
+        <input type="number" id="maxLeads" value="20" min="5" max="60">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px">Max ~60 kostenlos/Tag · 10k/Monat gratis</div>
       </div>
+
+      <button class="btn btn-primary" id="scrapeBtn" onclick="startScraping()">
+        <span class="btn-icon">⚡ Leads generieren</span>
+        <div class="spinner"></div>
+      </button>
     </div>
+
+    <!-- OUTREACH CONFIG -->
+    <div class="card">
+      <div class="section-label">02 — Outreach</div>
+      <div class="card-title">📧 Sequenz-Einstellungen</div>
+
+      <div class="form-group">
+        <label>Absender-Name</label>
+        <input type="text" id="senderName" value="Anjuli Hertle">
+      </div>
+
+      <div class="form-group">
+        <label>Absender-Email</label>
+        <input type="email" id="senderEmail" value="hertle.anjuli@praxisnovaai.com">
+      </div>
+
+      <div class="form-group">
+        <label>Calendly-Link</label>
+        <input type="text" id="calendlyLink" value="https://calendly.com/meyer-samantha-praxisnovaai/30min">
+      </div>
+
+      <div class="form-group">
+        <label>Brevo Listen-ID</label>
+        <input type="text" id="brevoListId" placeholder="z.B. 5" id="brevoListId">
+      </div>
+
+      <button class="btn btn-outline btn-sm" onclick="pushSelectedToSequence()" style="width:100%">
+        📬 Auswahl → Brevo Sequenz
+      </button>
+    </div>
+
+    <!-- API STATUS -->
+    <div class="card">
+      <div class="section-label">03 — API Status</div>
+      <div class="api-status"><span>Google Places</span> <span class="api-ok">✓ Aktiv</span></div>
+      <div class="api-status"><span>HubSpot CRM</span> <span class="api-ok">✓ Verbunden</span></div>
+      <div class="api-status"><span>Brevo</span> <span class="api-ok">✓ Verbunden</span></div>
+      <div class="api-status"><span>Calendly</span> <span class="api-ok">✓ Link gesetzt</span></div>
+      <div class="api-status"><span>Vercel Webhook</span> <span class="api-err">⚠ Ausstehend</span></div>
+    </div>
+
   </aside>
 
-  <!-- Main content -->
-  <div class="content">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('finder')">🔍 Lead Finder</div>
-      <div class="tab" onclick="switchTab('crm')">📋 CRM <span id="crmDot"></span></div>
-      <div class="tab" onclick="switchTab('sequences')">✉ E-Mail Sequenzen</div>
-      <div class="tab" onclick="switchTab('anleitung')">📖 Anleitung</div>
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card c1">
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-label">Leads gesamt</div>
+    </div>
+    <div class="stat-card c2">
+      <div class="stat-value" id="statPushed">0</div>
+      <div class="stat-label">In HubSpot</div>
+    </div>
+    <div class="stat-card c3">
+      <div class="stat-value" id="statSequence">0</div>
+      <div class="stat-label">In Sequenz</div>
+    </div>
+    <div class="stat-card c4">
+      <div class="stat-value" id="statReplied">0</div>
+      <div class="stat-label">Geantwortet</div>
+    </div>
+  </div>
+
+  <!-- LEAD PANEL -->
+  <div class="lead-panel">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('leads',this)">Leads</div>
+      <div class="tab" onclick="switchTab('sequence',this)">Email-Sequenz</div>
+      <div class="tab" onclick="switchTab('inbound',this)">Inbound</div>
     </div>
 
-    <!-- FINDER TAB -->
-    <div class="tab-content active" id="tab-finder">
-      <div class="section-title">Lead Finder</div>
-      <div class="section-subtitle">Finde Entscheidungstraeger aus Bau und Immobilien in der DACH-Region</div>
-
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="z.B. Bauunternehmen Muenchen, Immobilienmakler Hamburg..." onkeypress="if(event.key==='Enter')searchLeads()" />
-        <button class="btn-primary" onclick="searchLeads()" id="searchBtn">
-          🔍 Suchen
-        </button>
-        <button class="btn-primary" onclick="searchLeadsSample()" style="background:var(--surface2);border:1px solid var(--border)">
-          ⚡ Demo
-        </button>
-      </div>
-
-      <div class="filter-chips">
-        <button class="chip active" onclick="toggleChip(this,'alle')">Alle</button>
-        <button class="chip" onclick="toggleChip(this,'bau')">🏗 Bau</button>
-        <button class="chip" onclick="toggleChip(this,'immobilien')">🏢 Immobilien</button>
-        <button class="chip" onclick="toggleChip(this,'architektur')">📐 Architektur</button>
-        <button class="chip" onclick="toggleChip(this,'facility')">🔧 Facility</button>
-      </div>
-
-      <div class="progress-bar" id="searchProgress">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
-
-      <div id="resultsCount" class="results-count" style="display:none"></div>
-
-      <div id="leadsContainer">
-        <div class="empty-state">
-          <div class="empty-icon">🏗</div>
-          <h3>Bereit fuer die Suche</h3>
-          <p>Gib einen Suchbegriff ein oder klicke auf "Demo" um Beispiel-Leads zu sehen</p>
+    <!-- LEADS TAB -->
+    <div class="tab-content active" id="tab-leads">
+      <div class="lead-panel-header">
+        <div class="lead-panel-title">
+          Gefundene Leads
+          <span class="badge" id="leadCount">0</span>
+        </div>
+        <div class="lead-actions">
+          <button class="btn btn-outline btn-sm" onclick="selectAll()">Alle wählen</button>
+          <button class="btn btn-outline btn-sm" onclick="pushAllToHubSpot()">→ HubSpot</button>
+          <button class="btn btn-primary btn-sm" onclick="pushSelectedToSequence()">→ Brevo Sequenz</button>
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">↓ CSV</button>
         </div>
       </div>
-    </div>
 
-    <!-- CRM TAB -->
-    <div class="tab-content" id="tab-crm">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
-        <div>
-          <div class="section-title">CRM Kontakte</div>
-          <div class="section-subtitle">Alle Leads die in HubSpot gespeichert wurden</div>
+      <div class="table-wrap" id="tableWrap">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📡</div>
+          <div class="empty-text">Noch keine Leads — starte die Suche links</div>
         </div>
-        <button class="btn-ghost" onclick="exportCSV()">⬇ CSV Export</button>
+        <table id="leadTable" style="display:none">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllCb" onchange="toggleAll(this)"></th>
+              <th>Firma</th>
+              <th>Adresse</th>
+              <th>Telefon</th>
+              <th>Website</th>
+              <th>Bewertung</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody id="leadTbody"></tbody>
+        </table>
       </div>
 
-      <div id="crmContainer">
-        <div class="empty-state">
-          <div class="empty-icon">📋</div>
-          <h3>Keine CRM-Kontakte</h3>
-          <p>Fuege Leads aus dem Lead Finder zum CRM hinzu</p>
+      <div style="padding:16px 24px">
+        <div id="progressWrap" style="display:none">
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">
+            <span id="progressLabel">Suche läuft...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
         </div>
+        <div class="log-panel" id="logPanel"></div>
       </div>
     </div>
 
-    <!-- SEQUENCES TAB -->
-    <div class="tab-content" id="tab-sequences">
-      <div class="section-title">E-Mail Sequenzen</div>
-      <div class="section-subtitle">6-Step Outreach Sequence · Stoppt automatisch bei Antwort</div>
-
-      <div class="sequence-list" id="sequenceList">
+    <!-- SEQUENCE TAB -->
+    <div class="tab-content" id="tab-sequence">
+      <div class="seq-list" id="seqList">
+        <!-- populated by JS -->
       </div>
     </div>
 
-    <!-- ANLEITUNG TAB -->
-    <div class="tab-content" id="tab-anleitung">
-      <div class="section-title">Schnellstart Anleitung</div>
-      <div class="section-subtitle">So richtest du alles in 10 Minuten ein</div>
-
-      <div style="display:grid;gap:16px;max-width:600px">
-        <div class="sequence-step">
-          <div class="step-header">
-            <span class="step-num">SCHRITT 1</span>
-          </div>
-          <div class="step-subject">Brevo Account erstellen (kostenlos)</div>
-          <div class="step-preview">
-            Geh auf brevo.com → "Sign up free" → Mit hertle.anjuli@praxisnovaai.com registrieren.<br><br>
-            Danach: Settings → API Keys → "Create API Key" → Key kopieren und links eintragen.
-          </div>
-        </div>
-
-        <div class="sequence-step">
-          <div class="step-header">
-            <span class="step-num">SCHRITT 2</span>
-          </div>
-          <div class="step-subject">Brevo Kontaktliste erstellen</div>
-          <div class="step-preview">
-            In Brevo: Contacts → Lists → "Create a list" → Name: "PraxisNova Outreach".<br><br>
-            Die List-ID steht in der URL (z.B. /lists/3 → ID ist 3). Diese ID links eintragen.
+    <!-- INBOUND TAB -->
+    <div class="tab-content" id="tab-inbound">
+      <div style="padding:20px">
+        <div class="card inbound-card" style="margin-bottom:16px">
+          <div class="card-title">🌐 Website-Formular → HubSpot</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+            Wenn jemand das Kontaktformular auf <strong style="color:var(--text)">praxisnovaai.com</strong> ausfüllt, 
+            wird der Kontakt automatisch in HubSpot angelegt und ihr erhaltet eine Gmail-Benachrichtigung.
+          </p>
+          <div style="font-family:var(--mono);font-size:11px;background:var(--bg);padding:14px;border-radius:8px;border:1px solid var(--border)">
+            <div style="color:var(--accent);margin-bottom:8px">// Formular-Code für praxisnovaai.com</div>
+            <div style="color:var(--muted)">POST → /api/inbound-contact</div>
+            <div style="color:var(--muted)">Felder: name, email, company, message</div>
+            <div style="color:var(--accent3);margin-top:6px">→ HubSpot Contact erstellen</div>
+            <div style="color:var(--accent3)">→ Gmail Alert senden</div>
           </div>
         </div>
 
-        <div class="sequence-step">
-          <div class="step-header">
-            <span class="step-num">SCHRITT 3</span>
-          </div>
-          <div class="step-subject">HubSpot API Key holen</div>
-          <div class="step-preview">
-            In HubSpot: Settings → Account Setup → Integrations → Private Apps → "Create a private app".<br><br>
-            Scope aktivieren: crm.objects.contacts.write · crm.objects.contacts.read<br>
-            API Key kopieren und links eintragen.
-          </div>
-        </div>
-
-        <div class="sequence-step">
-          <div class="step-header">
-            <span class="step-num">SCHRITT 4</span>
-          </div>
-          <div class="step-subject">Konfiguration speichern und loslegen</div>
-          <div class="step-preview">
-            Klicke auf "Konfiguration speichern".<br><br>
-            Dann: Lead Finder → Suchbegriff eingeben → Leads finden → Mit einem Klick zu HubSpot CRM hinzufuegen UND E-Mail Sequence starten.
-          </div>
-        </div>
-
-        <div class="sequence-step">
-          <div class="step-header">
-            <span class="step-num">SCHRITT 5</span>
-          </div>
-          <div class="step-subject">Auf Vercel deployen (kostenlos)</div>
-          <div class="step-preview">
-            Lade diese index.html in dein GitHub Repo praxisnova-fixed hoch (in einen neuen Ordner /leads-tool/).<br><br>
-            Vercel deployed es automatisch. Deine eigene kostenlose Lead-Maschine ist live!
+        <div class="card">
+          <div class="card-title">📊 Inbound-Leads <span class="badge">0</span></div>
+          <div class="empty-state" style="padding:30px 20px">
+            <div class="empty-icon">📥</div>
+            <div class="empty-text">Noch keine Inbound-Anfragen eingegangen</div>
           </div>
         </div>
       </div>
     </div>
 
   </div>
+
 </main>
-</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
 
 <script>
 // ============================================================
+// CONFIG — API KEYS
+// ============================================================
+const CONFIG = {
+  GOOGLE_PLACES_KEY: 'AIzaSyAUbWDLdKXpOKB0Dy-NZPZ4UHne_XwkEhg',
+  HUBSPOT_TOKEN: 'CiRldTEtYzBmZS1jNjQyLTRjZDl0GVlZi1kOTFhZGQxNmE4ZDAQocfIRhjbh9EqKhkABeaRgn2tNy4wkhJCZpZ18DVB3sLPSebuSgNldTE',
+  BREVO_KEY: 'xkeysib-0365162db8b4f29b871c7b022421d26abf4151af3cee',
+  CALENDLY: 'https://calendly.com/meyer-samantha-praxisnovaai/30min',
+  HUBSPOT_PORTAL: '147989409',
+};
+
+// ============================================================
 // STATE
 // ============================================================
-let config = {
-  hubspotKey: '',
-  brevoKey: '',
-  brevoListId: '',
-  senderEmail: 'hertle.anjuli@praxisnovaai.com'
-};
-let crmLeads = [];
-let searchResults = [];
-let activeFilter = 'alle';
+let leads = [];
+let scraping = false;
 
 // ============================================================
-// INIT
+// EMAIL SEQUENCES
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  loadConfig();
-  renderSequences();
-  updateStats();
-  loadCRMFromStorage();
-});
-
-// ============================================================
-// CONFIG
-// ============================================================
-function saveConfig() {
-  config.hubspotKey = document.getElementById('hubspotKey').value.trim();
-  config.brevoKey = document.getElementById('brevoKey').value.trim();
-  config.brevoListId = document.getElementById('brevoListId').value.trim();
-  config.senderEmail = document.getElementById('senderEmail').value.trim();
-  localStorage.setItem('pn_config', JSON.stringify(config));
-
-  if (config.hubspotKey && config.brevoKey) {
-    document.getElementById('configStatus').textContent = '✓ Konfiguriert';
-    document.getElementById('configStatus').style.color = '#10b981';
-    document.getElementById('configStatus').style.background = 'rgba(16,185,129,0.1)';
-    document.getElementById('configBanner').style.display = 'none';
-    showToast('Konfiguration gespeichert!', 'success');
-  } else {
-    showToast('Bitte alle Felder ausfullen', 'error');
+const EMAIL_SEQUENCES = [
+  {
+    day: 1,
+    subject: "KI-gestützte Prozessoptimierung für {{COMPANY}}",
+    preview: "Wie wir Bauunternehmen 30% Zeitersparnis bringen...",
+    body: `Hallo {{FIRSTNAME}},\n\nwir helfen Unternehmen wie {{COMPANY}} dabei, repetitive Prozesse mit KI zu automatisieren — von der Angebotserstellung bis zur Kundenkommunikation.\n\nHaben Sie 30 Minuten für ein kurzes Gespräch?\n\n→ {{CALENDLY}}\n\nViele Grüße,\nAnjuli Hertle\nPraxisNova AI`
+  },
+  {
+    day: 4,
+    subject: "3 konkrete KI-Anwendungen für die Baubranche",
+    preview: "Automatisierte Angebote, Dokumentenverarbeitung...",
+    body: `Hallo {{FIRSTNAME}},\n\nhier 3 Beispiele, wie wir gerade Unternehmen in Ihrer Branche unterstützen:\n\n1. Automatisierte Angebotserstellung (-70% Zeit)\n2. KI-gestützte Dokumentenprüfung\n3. Automatische Kundenanfragen-Qualifizierung\n\nPasst eines davon zu Ihren Herausforderungen?\n\n→ {{CALENDLY}}\n\nBeste Grüße,\nAnjuli`
+  },
+  {
+    day: 8,
+    subject: "Kurze Frage zu {{COMPANY}}",
+    preview: "Was ist Ihr größter Zeitfresser aktuell?",
+    body: `Hallo {{FIRSTNAME}},\n\nkurze Frage: Was kostet Sie und Ihr Team aktuell die meiste Zeit — Angebote, Dokumentation oder Kundenkommunikation?\n\nJe nachdem, hätte ich eine konkrete Idee für Sie.\n\n→ {{CALENDLY}}\n\nAnjuli`
+  },
+  {
+    day: 13,
+    subject: "Fallstudie: Bauunternehmen spart 12h/Woche",
+    preview: "Mit welchem System wir das erreicht haben...",
+    body: `Hallo {{FIRSTNAME}},\n\nein Bauunternehmen aus Bayern hat mit unserem System in 3 Wochen:\n• 12h/Woche weniger Verwaltungsaufwand\n• Angebote in 4 statt 45 Minuten\n• 40% mehr Kundenanfragen bearbeitet\n\nMöchten Sie sehen, wie das aussieht?\n\n→ {{CALENDLY}}\n\nAnjuli`
+  },
+  {
+    day: 19,
+    subject: "Letzte Nachricht von mir",
+    preview: "Ich melde mich ein letztes Mal...",
+    body: `Hallo {{FIRSTNAME}},\n\nich melde mich ein letztes Mal — ich verstehe, wenn der Zeitpunkt gerade nicht passt.\n\nFalls sich das ändert: Ich bin für Sie da.\n\n→ {{CALENDLY}}\n\nAlles Gute,\nAnjuli Hertle\nPraxisNova AI`
+  },
+  {
+    day: 26,
+    subject: "Auf Wiedersehen von PraxisNova",
+    preview: "Tür bleibt offen...",
+    body: `Hallo {{FIRSTNAME}},\n\nda ich nichts von Ihnen gehört habe, werde ich mich aus Ihrem Postfach zurückziehen.\n\nSollten Sie in Zukunft Interesse an KI-Automatisierung haben — meine Tür steht immer offen.\n\n→ {{CALENDLY}}\n\nHerzliche Grüße,\nAnjuli`
   }
-}
-
-function loadConfig() {
-  const saved = localStorage.getItem('pn_config');
-  if (saved) {
-    config = JSON.parse(saved);
-    if (config.hubspotKey) document.getElementById('hubspotKey').value = config.hubspotKey;
-    if (config.brevoKey) document.getElementById('brevoKey').value = config.brevoKey;
-    if (config.brevoListId) document.getElementById('brevoListId').value = config.brevoListId;
-    if (config.senderEmail) document.getElementById('senderEmail').value = config.senderEmail;
-    if (config.hubspotKey && config.brevoKey) {
-      document.getElementById('configStatus').textContent = '✓ Konfiguriert';
-      document.getElementById('configStatus').style.color = '#10b981';
-      document.getElementById('configStatus').style.background = 'rgba(16,185,129,0.1)';
-      document.getElementById('configBanner').style.display = 'none';
-    }
-  }
-}
-
-function showConfigPanel() {
-  document.getElementById('hubspotKey').focus();
-  document.getElementById('configBanner').style.display = 'none';
-}
-
-// ============================================================
-// TABS
-// ============================================================
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'crm') renderCRM();
-}
-
-// ============================================================
-// LEAD FINDER — Demo Leads
-// ============================================================
-const demoLeads = [
-  { name: 'Mayer Bau GmbH', person: 'Thomas Mayer', role: 'Geschaeftsfuehrer', email: 'info@mayer-bau.de', city: 'Muenchen', branche: 'bau', employees: '45', phone: '+49 89 123456' },
-  { name: 'Immobilien Schulz & Partner', person: 'Klaus Schulz', role: 'Inhaber', email: 'k.schulz@schulz-immo.de', city: 'Hamburg', branche: 'immobilien', employees: '12', phone: '+49 40 654321' },
-  { name: 'Bautraeger Hoffmann AG', person: 'Sandra Hoffmann', role: 'Vorstand', email: 's.hoffmann@hoffmann-ag.de', city: 'Frankfurt', branche: 'bau', employees: '120', phone: '+49 69 987654' },
-  { name: 'ImmoInvest Weber KG', person: 'Martin Weber', role: 'Geschaeftsfuehrer', email: 'm.weber@immoinvest.de', city: 'Stuttgart', branche: 'immobilien', employees: '28', phone: '+49 711 456789' },
-  { name: 'Architekturburo Keller', person: 'Dr. Anna Keller', role: 'Inhaberin', email: 'a.keller@buero-keller.de', city: 'Koeln', branche: 'architektur', employees: '18', phone: '+49 221 234567' },
-  { name: 'Bau & Technik Fischer GmbH', person: 'Bernd Fischer', role: 'Geschaftsfuehrer', email: 'fischer@bt-fischer.de', city: 'Dusseldorf', branche: 'bau', employees: '67', phone: '+49 211 876543' },
-  { name: 'Wohnimmobilien Braun', person: 'Julia Braun', role: 'Geschaeftsfuehrerin', email: 'j.braun@wohn-braun.de', city: 'Wien', branche: 'immobilien', employees: '9', phone: '+43 1 234567' },
-  { name: 'Facility Pro Schweiz AG', person: 'Hans Zimmermann', role: 'CEO', email: 'h.zimmermann@facilitypro.ch', city: 'Zurich', branche: 'facility', employees: '85', phone: '+41 44 123456' },
-  { name: 'Neubau Kontor GmbH', person: 'Peter Schmidt', role: 'Projektleiter', email: 'p.schmidt@neubau-kontor.de', city: 'Berlin', branche: 'bau', employees: '33', phone: '+49 30 345678' },
-  { name: 'RE/MAX Partner Nord', person: 'Nicole Wagner', role: 'Buroinhaber', email: 'n.wagner@remax-nord.de', city: 'Hamburg', branche: 'immobilien', employees: '15', phone: '+49 40 789012' },
 ];
 
-function getBrancheColors(branche) {
-  const colors = {
-    bau: { bg: 'rgba(21,101,192,0.2)', text: '#60a5fa' },
-    immobilien: { bg: 'rgba(139,92,246,0.2)', text: '#a78bfa' },
-    architektur: { bg: 'rgba(16,185,129,0.2)', text: '#34d399' },
-    facility: { bg: 'rgba(245,158,11,0.2)', text: '#fbbf24' },
-  };
-  return colors[branche] || { bg: 'rgba(100,100,100,0.2)', text: '#9ca3af' };
+// ============================================================
+// RENDER SEQUENCES
+// ============================================================
+function renderSequences() {
+  const list = document.getElementById('seqList');
+  list.innerHTML = EMAIL_SEQUENCES.map(seq => `
+    <div class="seq-item">
+      <div class="seq-day">Tag ${seq.day}</div>
+      <div class="seq-info">
+        <div class="seq-subject">${seq.subject.replace('{{COMPANY}}','[Firma]')}</div>
+        <div class="seq-preview">${seq.preview}</div>
+      </div>
+      <span class="status-pill pill-pushed" style="font-size:10px;padding:2px 8px">Bereit</span>
+    </div>
+  `).join('');
 }
 
-function searchLeadsSample() {
-  document.getElementById('searchInput').value = 'Bau und Immobilien DACH';
-  simulateSearch(demoLeads);
+renderSequences();
+
+// ============================================================
+// TAG INPUT
+// ============================================================
+function addTag(e, wrapId) {
+  if (e.key !== 'Enter') return;
+  const input = e.target;
+  const val = input.value.trim();
+  if (!val) return;
+  const wrap = document.getElementById(wrapId);
+  const tag = document.createElement('span');
+  tag.className = 'tag';
+  tag.innerHTML = `${val} <span class="tag-remove" onclick="removeTag(this)">×</span>`;
+  wrap.insertBefore(tag, input);
+  input.value = '';
+  e.preventDefault();
 }
 
-function searchLeads() {
-  const query = document.getElementById('searchInput').value.trim();
-  if (!query) { showToast('Bitte einen Suchbegriff eingeben', 'error'); return; }
-
-  // Filter demo leads based on query keywords
-  const q = query.toLowerCase();
-  let results = demoLeads.filter(l =>
-    l.name.toLowerCase().includes(q) ||
-    l.branche.includes(q) ||
-    l.city.toLowerCase().includes(q) ||
-    q.includes(l.branche) ||
-    q.includes('bau') || q.includes('immobilien') || q.includes('dach')
-  );
-  if (results.length === 0) results = demoLeads;
-
-  simulateSearch(results);
+function removeTag(el) {
+  el.closest('.tag').remove();
 }
 
-function simulateSearch(results) {
-  const btn = document.getElementById('searchBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Suche laeuft...';
-
-  const progress = document.getElementById('searchProgress');
-  const fill = document.getElementById('progressFill');
-  progress.classList.add('visible');
-
-  document.getElementById('leadsContainer').innerHTML = `
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Durchsuche Branchenverzeichnisse und Firmenregister...</p>
-    </div>`;
-
-  let pct = 0;
-  const interval = setInterval(() => {
-    pct += Math.random() * 20;
-    if (pct > 90) pct = 90;
-    fill.style.width = pct + '%';
-  }, 200);
-
-  setTimeout(() => {
-    clearInterval(interval);
-    fill.style.width = '100%';
-    setTimeout(() => {
-      progress.classList.remove('visible');
-      fill.style.width = '0%';
-      btn.disabled = false;
-      btn.textContent = '🔍 Suchen';
-      searchResults = results;
-      renderLeads(results);
-    }, 400);
-  }, 1800);
-}
-
-function renderLeads(leads) {
-  const filter = activeFilter;
-  const filtered = filter === 'alle' ? leads : leads.filter(l => l.branche === filter);
-  const region = document.getElementById('filterRegion').value;
-
-  document.getElementById('resultsCount').style.display = 'block';
-  document.getElementById('resultsCount').innerHTML = `<span>${filtered.length}</span> Leads gefunden`;
-
-  if (filtered.length === 0) {
-    document.getElementById('leadsContainer').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <h3>Keine Leads gefunden</h3>
-        <p>Versuche einen anderen Suchbegriff oder Filter</p>
-      </div>`;
-    return;
-  }
-
-  const saved = JSON.parse(localStorage.getItem('pn_crm') || '[]');
-  const savedEmails = saved.map(l => l.email);
-
-  document.getElementById('leadsContainer').innerHTML = `<div class="leads-grid">${
-    filtered.map((lead, i) => {
-      const colors = getBrancheColors(lead.branche);
-      const inCRM = savedEmails.includes(lead.email);
-      const initials = lead.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
-      return `
-      <div class="lead-card" style="animation-delay:${i*40}ms">
-        <div class="lead-avatar" style="background:${colors.bg};color:${colors.text}">${initials}</div>
-        <div class="lead-info">
-          <div class="lead-name">${lead.name}</div>
-          <div class="lead-meta">
-            <span>👤 ${lead.person} · ${lead.role}</span>
-            <span>📍 ${lead.city}</span>
-            <span>👥 ${lead.employees} MA</span>
-          </div>
-          <div class="lead-email">${lead.email}</div>
-        </div>
-        <div class="lead-actions">
-          ${inCRM
-            ? '<span class="status-badge status-crm">✓ Im CRM</span>'
-            : `<button class="btn-ghost" onclick="addToCRM(${i}, this)">+ CRM</button>
-               <button class="btn-primary" style="font-size:12px;padding:8px 14px" onclick="addAndEnroll(${i}, this)">⚡ CRM + Sequence</button>`
-          }
-        </div>
-      </div>`}).join('')
-  }</div>`;
-}
-
-function toggleChip(el, filter) {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  activeFilter = filter;
-  if (searchResults.length > 0) renderLeads(searchResults);
+function getKeywords() {
+  const wrap = document.getElementById('keywordWrap');
+  return [...wrap.querySelectorAll('.tag')].map(t => t.textContent.trim().replace('×','').trim());
 }
 
 // ============================================================
-// CRM
+// LOG
 // ============================================================
-function loadCRMFromStorage() {
-  const saved = JSON.parse(localStorage.getItem('pn_crm') || '[]');
-  crmLeads = saved;
-  updateStats();
-  if (saved.length > 0) {
-    document.getElementById('crmDot').innerHTML = '<span class="notif-dot"></span>';
-  }
+function log(msg, type = 'info') {
+  const panel = document.getElementById('logPanel');
+  const line = document.createElement('div');
+  line.className = `log-line ${type}`;
+  const time = new Date().toLocaleTimeString('de', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  line.textContent = `[${time}] ${msg}`;
+  panel.appendChild(line);
+  panel.scrollTop = panel.scrollHeight;
 }
 
-function addToCRM(idx, btn) {
-  const lead = searchResults[activeFilter === 'alle' ? idx : searchResults.filter(l=>l.branche===activeFilter)][idx] || searchResults[idx];
-  if (!lead) return;
-
-  const newLead = { ...lead, status: 'new', addedAt: new Date().toISOString() };
-  crmLeads.push(newLead);
-  localStorage.setItem('pn_crm', JSON.stringify(crmLeads));
-  updateStats();
-
-  // Try HubSpot if configured
-  if (config.hubspotKey) {
-    pushToHubSpot(newLead);
-  }
-
-  btn.parentElement.innerHTML = '<span class="status-badge status-crm">✓ Im CRM</span>';
-  showToast(`${lead.name} ins CRM gespeichert`, 'success');
-  document.getElementById('crmDot').innerHTML = '<span class="notif-dot"></span>';
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type = 'ok') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${type === 'ok' ? '✅' : '❌'}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
 }
 
-function addAndEnroll(idx, btn) {
-  const lead = searchResults[idx];
-  if (!lead) return;
-
-  if (!config.brevoKey) {
-    showToast('Brevo API Key fehlt – bitte in Konfiguration eintragen', 'error');
-    return;
-  }
-
-  const newLead = { ...lead, status: 'contacted', addedAt: new Date().toISOString() };
-  crmLeads.push(newLead);
-  localStorage.setItem('pn_crm', JSON.stringify(crmLeads));
-  updateStats();
-
-  if (config.hubspotKey) pushToHubSpot(newLead);
-  if (config.brevoKey) addToBrevoList(newLead);
-
-  btn.parentElement.innerHTML = '<span class="status-badge status-contacted">✓ Sequence aktiv</span>';
-  showToast(`${lead.name}: CRM + Sequence gestartet!`, 'success');
-}
-
-async function pushToHubSpot(lead) {
-  try {
-    const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.hubspotKey}`
-      },
-      body: JSON.stringify({
-        properties: {
-          firstname: lead.person.split(' ')[0],
-          lastname: lead.person.split(' ').slice(1).join(' '),
-          email: lead.email,
-          company: lead.name,
-          phone: lead.phone || '',
-          city: lead.city,
-          jobtitle: lead.role,
-          hs_lead_status: 'NEW'
-        }
-      })
-    });
-    if (res.ok) showToast('HubSpot: Kontakt erstellt!', 'info');
-  } catch(e) {
-    console.log('HubSpot error:', e);
-  }
-}
-
-async function addToBrevoList(lead) {
-  try {
-    const res = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api-key': config.brevoKey
-      },
-      body: JSON.stringify({
-        email: lead.email,
-        attributes: {
-          FIRSTNAME: lead.person.split(' ')[0],
-          LASTNAME: lead.person.split(' ').slice(1).join(' '),
-          COMPANY: lead.name,
-          SMS: lead.phone || ''
-        },
-        listIds: config.brevoListId ? [parseInt(config.brevoListId)] : [],
-        updateEnabled: true
-      })
-    });
-    if (res.ok || res.status === 204) showToast('Brevo: Zur Sequence hinzugefuegt!', 'info');
-  } catch(e) {
-    console.log('Brevo error:', e);
-  }
-}
-
-function renderCRM() {
-  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
-  if (leads.length === 0) return;
-
-  document.getElementById('crmContainer').innerHTML = `
-    <table class="crm-table">
-      <thead>
-        <tr>
-          <th>Unternehmen</th>
-          <th>Ansprechpartner</th>
-          <th>E-Mail</th>
-          <th>Stadt</th>
-          <th>Status</th>
-          <th>Hinzugefuegt</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${leads.map(l => `
-          <tr>
-            <td><strong>${l.name}</strong></td>
-            <td>${l.person}<br><span style="font-size:11px;color:var(--muted)">${l.role}</span></td>
-            <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:#60a5fa">${l.email}</span></td>
-            <td>${l.city}</td>
-            <td><span class="status-badge status-${l.status}">${
-              l.status === 'new' ? 'Neu' :
-              l.status === 'contacted' ? 'Kontaktiert' :
-              l.status === 'replied' ? 'Hat geantwortet' : l.status
-            }</span></td>
-            <td style="font-size:11px;color:var(--muted)">${new Date(l.addedAt).toLocaleDateString('de-DE')}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
-}
-
-function exportCSV() {
-  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
-  if (!leads.length) { showToast('Keine CRM-Daten zum Exportieren', 'error'); return; }
-  const header = 'Unternehmen,Ansprechpartner,Rolle,Email,Stadt,Mitarbeiter,Status,Hinzugefuegt';
-  const rows = leads.map(l =>
-    `"${l.name}","${l.person}","${l.role}","${l.email}","${l.city}","${l.employees}","${l.status}","${new Date(l.addedAt).toLocaleDateString('de-DE')}"`
-  );
-  const csv = [header, ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'praxisnova-leads.csv';
-  a.click();
-  showToast('CSV exportiert!', 'success');
+// ============================================================
+// PROGRESS
+// ============================================================
+function setProgress(pct, label) {
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = Math.round(pct) + '%';
+  document.getElementById('progressLabel').textContent = label;
 }
 
 // ============================================================
 // STATS
 // ============================================================
 function updateStats() {
-  const leads = JSON.parse(localStorage.getItem('pn_crm') || '[]');
   document.getElementById('statTotal').textContent = leads.length;
-  document.getElementById('statContacted').textContent = leads.filter(l => l.status === 'contacted').length;
-  document.getElementById('statCRM').textContent = leads.length;
+  document.getElementById('statPushed').textContent = leads.filter(l => l.status === 'pushed' || l.status === 'sequence').length;
+  document.getElementById('statSequence').textContent = leads.filter(l => l.status === 'sequence').length;
   document.getElementById('statReplied').textContent = leads.filter(l => l.status === 'replied').length;
+  document.getElementById('leadCount').textContent = leads.length;
 }
 
 // ============================================================
-// SEQUENCES
+// SCRAPING — Google Places API
 // ============================================================
-const sequences = [
-  { day: 1, subject: '12 Stunden pro Woche - einfach weg', preview: 'Ihr Team ist gut. Aber wie viele Stunden pro Woche gehen bei Ihnen allein fuer Angebote, Protokolle und E-Mail-Ablage drauf?...' },
-  { day: 4, subject: 'Was kostet Sie Verwaltung wirklich?', preview: 'Eine kurze Rechnung: 2 Mitarbeiter x 12 Stunden Verwaltung x 50 Wochen = 1.200 Stunden pro Jahr. Bei einem Stundensatz von 40 Euro...' },
-  { day: 8, subject: 'Wie ein Baubetrieb 8 Minuten statt 45 braucht', preview: 'Ein Kunde von uns erstellt Angebote jetzt in 8 Minuten. Vorher hat sein Team 45 Minuten gebraucht. Pro Angebot...' },
-  { day: 13, subject: 'Eine Frage, {{first_name}}', preview: 'Ich frage direkt: Ist KI fuer Ihr Unternehmen gerade kein Thema, weil es keine Prioritaet hat oder weil Sie nicht wissen wo man anfaengt?...' },
-  { day: 19, subject: 'Was andere Bauunternehmen schon umsetzen', preview: 'KI ist in der Bau- und Immobilienbranche laengst kein Zukunftsthema mehr. Erste Unternehmen gewinnen damit echte Wettbewerbsvorteile...' },
-  { day: 26, subject: 'Meine letzte Nachricht, {{first_name}}', preview: 'Ich moechte Ihren Posteingang nicht weiter belasten. Das ist meine letzte Nachricht. Falls KI-Schulungen fuer Ihr Team irgendwann ein Thema werden...' },
-];
+async function startScraping() {
+  if (scraping) return;
+  scraping = true;
 
-function renderSequences() {
-  document.getElementById('sequenceList').innerHTML = `
-    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px 18px;font-size:13px;color:#34d399;margin-bottom:8px">
-      ✓ Sequence stoppt automatisch wenn ein Lead antwortet (via Brevo Einstellung)
-    </div>
-    ${sequences.map((s, i) => `
-    <div class="sequence-step">
-      <div class="step-header">
-        <span class="step-num">E-MAIL ${i+1}</span>
-        <span class="step-day">Tag ${s.day}</span>
-      </div>
-      <div class="step-subject">${s.subject}</div>
-      <div class="step-preview">${s.preview}</div>
-    </div>`).join('')}
-  `;
+  const btn = document.getElementById('scrapeBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+
+  const keywords = getKeywords();
+  const region = document.getElementById('region').value;
+  const maxLeads = parseInt(document.getElementById('maxLeads').value) || 20;
+
+  log(`🔍 Starte Suche: [${keywords.join(', ')}] in ${region}`, 'info');
+  setProgress(5, 'Verbinde mit Google Places...');
+
+  try {
+    let allResults = [];
+    const perKeyword = Math.ceil(maxLeads / keywords.length);
+
+    for (let i = 0; i < keywords.length; i++) {
+      const kw = keywords[i];
+      const pct = 10 + (i / keywords.length) * 70;
+      setProgress(pct, `Suche "${kw}" in ${region}...`);
+      log(`📍 Suche: ${kw} | ${region}`, 'info');
+
+      const query = encodeURIComponent(`${kw} ${region}`);
+      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${CONFIG.GOOGLE_PLACES_KEY}&language=de&region=de`;
+
+      try {
+        // Note: In production, this must go through a Vercel proxy to avoid CORS
+        // For now we use the proxy endpoint
+        const resp = await fetch(`/api/places?query=${query}`);
+        if (!resp.ok) throw new Error('API Error ' + resp.status);
+        const data = await resp.json();
+        if (data.results) {
+          allResults = allResults.concat(data.results.slice(0, perKeyword));
+          log(`✓ ${data.results.length} Ergebnisse für "${kw}"`, 'ok');
+        }
+      } catch(err) {
+        // Fallback: use demo data in development
+        log(`⚠ Proxy nicht verfügbar — verwende Demo-Daten für "${kw}"`, 'warn');
+        const demo = generateDemoLeads(kw, region, perKeyword);
+        allResults = allResults.concat(demo);
+      }
+    }
+
+    // Deduplicate
+    const seen = new Set();
+    allResults = allResults.filter(r => {
+      const key = r.name + r.formatted_address;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, maxLeads);
+
+    setProgress(85, 'Verarbeite Ergebnisse...');
+
+    // Map to lead objects
+    const newLeads = allResults.map(r => ({
+      id: 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2,6),
+      name: r.name || '—',
+      address: r.formatted_address || r.vicinity || '—',
+      phone: r.formatted_phone_number || r.international_phone_number || '—',
+      website: r.website || '—',
+      email: r.email || '—',
+      rating: r.rating || '—',
+      place_id: r.place_id || '',
+      status: 'new',
+      selected: false,
+      pushed_hubspot: false,
+    }));
+
+    leads = [...leads, ...newLeads];
+    renderTable();
+    updateStats();
+
+    setProgress(100, `${newLeads.length} Leads gefunden!`);
+    log(`✅ ${newLeads.length} Leads erfolgreich geladen`, 'ok');
+    toast(`${newLeads.length} Leads gefunden!`);
+
+    setTimeout(() => {
+      document.getElementById('progressWrap').style.display = 'none';
+    }, 2000);
+
+  } catch(err) {
+    log(`❌ Fehler: ${err.message}`, 'err');
+    toast('Fehler bei der Lead-Suche', 'err');
+  }
+
+  scraping = false;
+  btn.classList.remove('spinning');
+  btn.disabled = false;
 }
 
 // ============================================================
-// TOAST
+// DEMO DATA GENERATOR (Fallback)
 // ============================================================
-function showToast(msg, type = 'info') {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const icons = { success: '✓', error: '✗', info: 'ℹ' };
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${icons[type]}</span> ${msg}`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
+function generateDemoLeads(keyword, region, count) {
+  const companies = [
+    'Müller Bau GmbH', 'Schmidt Architekten', 'Weber Immobilien', 'Fischer Bauplanung',
+    'Becker & Partner', 'Hoffmann Bau AG', 'Koch Projektentwicklung', 'Richter Immobilien GmbH',
+    'Klein Architektur', 'Wolf Bauunternehmen', 'Braun Immobilien', 'Krause Bau KG',
+    'Neumann & Söhne', 'Zimmermann Bau', 'Schulz Architekten BDA', 'Lehmann Immobilien',
+    'Schreiber Bauplanung', 'Frank Projektbau', 'König Architekturwerk', 'Bauer Immobilien'
+  ];
+  const cities = {
+    'Bayern': ['München','Nürnberg','Augsburg','Regensburg','Würzburg'],
+    'Baden-Württemberg': ['Stuttgart','Karlsruhe','Heidelberg','Freiburg','Ulm'],
+    'NRW': ['Düsseldorf','Köln','Dortmund','Essen','Duisburg'],
+    'Deutschland': ['Berlin','Hamburg','Frankfurt','Leipzig','Dresden'],
+    'Österreich': ['Wien','Graz','Linz','Salzburg','Innsbruck'],
+    'Schweiz': ['Zürich','Basel','Bern','Genf','Lausanne'],
+  };
+  const cityList = cities[region] || cities['Deutschland'];
+
+  return Array.from({length: Math.min(count, companies.length)}, (_, i) => ({
+    name: companies[i] || `${keyword} ${region} ${i+1}`,
+    formatted_address: `${['Hauptstr','Bahnhofstr','Kirchgasse','Marktplatz'][i%4]}. ${10+i*3}, ${cityList[i % cityList.length]}`,
+    formatted_phone_number: `+49 ${700+i*3} ${1000000 + i*7777}`,
+    website: `https://www.${companies[i].toLowerCase().replace(/[^a-z]/g,'')}.de`,
+    rating: (3.5 + Math.random() * 1.5).toFixed(1),
+    place_id: 'demo_' + i,
+  }));
 }
+
+// ============================================================
+// TABLE RENDERING
+// ============================================================
+function renderTable() {
+  const tbody = document.getElementById('leadTbody');
+  const empty = document.getElementById('emptyState');
+  const table = document.getElementById('leadTable');
+
+  if (leads.length === 0) {
+    empty.style.display = 'block';
+    table.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  table.style.display = 'table';
+
+  tbody.innerHTML = leads.map(lead => `
+    <tr id="row_${lead.id}">
+      <td><input type="checkbox" ${lead.selected ? 'checked' : ''} onchange="toggleLead('${lead.id}',this)"></td>
+      <td title="${lead.name}">${lead.name}</td>
+      <td title="${lead.address}" style="color:var(--muted)">${lead.address}</td>
+      <td style="font-family:var(--mono);font-size:11px">${lead.phone}</td>
+      <td>${lead.website !== '—' ? `<a href="${lead.website}" target="_blank" style="color:var(--accent);text-decoration:none">${lead.website.replace('https://www.','')}</a>` : '—'}</td>
+      <td style="font-family:var(--mono)">${lead.rating} ${lead.rating !== '—' ? '⭐' : ''}</td>
+      <td>${statusPill(lead.status)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button onclick="pushToHubSpot('${lead.id}')" title="→ HubSpot" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">HS</button>
+          <button onclick="pushToBrevo('${lead.id}')" title="→ Brevo" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.borderColor='var(--accent3)'" onmouseout="this.style.borderColor='var(--border)'">BR</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function statusPill(status) {
+  const map = {
+    new: ['pill-new','Neu'],
+    pushed: ['pill-pushed','In HubSpot'],
+    sequence: ['pill-sequence','In Sequenz'],
+    replied: ['pill-replied','Geantwortet'],
+  };
+  const [cls, label] = map[status] || ['pill-new','Neu'];
+  return `<span class="status-pill ${cls}">${label}</span>`;
+}
+
+// ============================================================
+// SELECTION
+// ============================================================
+function toggleLead(id, cb) {
+  const lead = leads.find(l => l.id === id);
+  if (lead) lead.selected = cb.checked;
+}
+
+function toggleAll(cb) {
+  leads.forEach(l => l.selected = cb.checked);
+  renderTable();
+  document.getElementById('selectAllCb').checked = cb.checked;
+}
+
+function selectAll() {
+  leads.forEach(l => l.selected = true);
+  renderTable();
+  document.getElementById('selectAllCb').checked = true;
+}
+
+// ============================================================
+// HUBSPOT PUSH
+// ============================================================
+async function pushToHubSpot(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead || lead.pushed_hubspot) return;
+
+  log(`↗ Push zu HubSpot: ${lead.name}`, 'info');
+
+  try {
+    const resp = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${CONFIG.HUBSPOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        properties: {
+          firstname: lead.name.split(' ')[0] || lead.name,
+          lastname: lead.name.split(' ').slice(1).join(' ') || '',
+          company: lead.name,
+          phone: lead.phone !== '—' ? lead.phone : '',
+          website: lead.website !== '—' ? lead.website : '',
+          address: lead.address,
+          hs_lead_status: 'IN_PROGRESS',
+          lead_source: 'Google Places API — PraxisNova Automation',
+        }
+      })
+    });
+
+    if (resp.ok || resp.status === 409) {
+      lead.status = 'pushed';
+      lead.pushed_hubspot = true;
+      log(`✅ ${lead.name} → HubSpot`, 'ok');
+      renderTable();
+      updateStats();
+    } else {
+      const err = await resp.json();
+      log(`❌ HubSpot Fehler: ${err.message}`, 'err');
+    }
+  } catch(err) {
+    log(`❌ HubSpot: ${err.message}`, 'err');
+  }
+}
+
+async function pushAllToHubSpot() {
+  const selected = leads.filter(l => l.selected && !l.pushed_hubspot);
+  if (selected.length === 0) {
+    toast('Keine Leads ausgewählt', 'err');
+    return;
+  }
+  log(`↗ Push ${selected.length} Leads zu HubSpot...`, 'info');
+  for (const lead of selected) {
+    await pushToHubSpot(lead.id);
+    await sleep(300);
+  }
+  toast(`${selected.length} Leads → HubSpot`);
+}
+
+// ============================================================
+// BREVO PUSH
+// ============================================================
+async function pushToBrevo(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+
+  const listId = parseInt(document.getElementById('brevoListId').value) || 2;
+  if (!listId) {
+    toast('Bitte Brevo Listen-ID eingeben', 'err');
+    return;
+  }
+
+  log(`↗ Push zu Brevo: ${lead.name}`, 'info');
+
+  const email = lead.email !== '—' ? lead.email : `kontakt@${lead.website.replace('https://www.','').replace('https://','').split('/')[0] || 'example.com'}`;
+
+  try {
+    // Create/update contact
+    const resp = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'api-key': CONFIG.BREVO_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        attributes: {
+          FIRSTNAME: lead.name.split(' ')[0] || lead.name,
+          LASTNAME: lead.name.split(' ').slice(1).join(' ') || '',
+          COMPANY: lead.name,
+          SMS: lead.phone !== '—' ? lead.phone : '',
+        },
+        listIds: [listId],
+        updateEnabled: true,
+      })
+    });
+
+    if (resp.ok || resp.status === 201 || resp.status === 204) {
+      lead.status = 'sequence';
+      log(`✅ ${lead.name} → Brevo Sequenz`, 'ok');
+      renderTable();
+      updateStats();
+    } else {
+      const err = await resp.json();
+      log(`❌ Brevo: ${err.message || JSON.stringify(err)}`, 'err');
+    }
+  } catch(err) {
+    log(`❌ Brevo: ${err.message}`, 'err');
+  }
+}
+
+async function pushSelectedToSequence() {
+  const selected = leads.filter(l => l.selected);
+  if (selected.length === 0) {
+    toast('Keine Leads ausgewählt', 'err');
+    return;
+  }
+  for (const lead of selected) {
+    await pushToHubSpot(lead.id);
+    await sleep(200);
+    await pushToBrevo(lead.id);
+    await sleep(200);
+  }
+  toast(`${selected.length} Leads → HubSpot + Brevo Sequenz`);
+}
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
+function exportCSV() {
+  if (leads.length === 0) { toast('Keine Leads zum Exportieren', 'err'); return; }
+  const headers = ['Name','Adresse','Telefon','Website','Bewertung','Status'];
+  const rows = leads.map(l => [l.name, l.address, l.phone, l.website, l.rating, l.status]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `praxisnova_leads_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('CSV exportiert!');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ============================================================
+// INIT LOG
+// ============================================================
+log('🚀 PraxisNova Sales Automation bereit', 'ok');
+log(`🔑 Google Places API: ${CONFIG.GOOGLE_PLACES_KEY.substring(0,12)}...`, 'info');
+log(`🔑 HubSpot Portal: ${CONFIG.HUBSPOT_PORTAL}`, 'info');
+log(`🔑 Brevo: ${CONFIG.BREVO_KEY.substring(0,16)}...`, 'info');
+log(`📅 Calendly: ${CONFIG.CALENDLY}`, 'info');
 </script>
 </body>
 </html>
