@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "env": {
+    "GOOGLE_PLACES_KEY": "@google_places_key",
+    "HUBSPOT_TOKEN": "@hubspot_token",
+    "BREVO_KEY": "@brevo_key",
+    "HUBSPOT_PORTAL": "147989409"
+  }
+}
