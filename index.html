@@ -1,1406 +1,489 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PraxisNova — Sales Automation</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #1a1a24;
-    --border: #2a2a38;
-    --accent: #6c63ff;
-    --accent2: #ff6584;
-    --accent3: #43e97b;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --font: 'Syne', sans-serif;
-    --mono: 'DM Mono', monospace;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* GRID BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(108,99,255,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(108,99,255,.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* HEADER */
-  header {
-    position: relative;
-    z-index: 10;
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,10,15,.8);
-    backdrop-filter: blur(12px);
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-
-  .logo-dot {
-    width: 10px; height: 10px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--accent);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 12px var(--accent); }
-    50% { box-shadow: 0 0 24px var(--accent), 0 0 40px var(--accent); }
-  }
-
-  .status-bar {
-    display: flex;
-    gap: 16px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .status-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent3);
-    box-shadow: 0 0 6px var(--accent3);
-  }
-
-  /* MAIN LAYOUT */
-  main {
-    position: relative;
-    z-index: 1;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 32px;
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 24px;
-  }
-
-  /* SECTION TITLE */
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-  }
-
-  .card-title {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* CONFIG PANEL */
-  .config-panel {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .form-group {
-    margin-bottom: 16px;
-  }
-
-  label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-  }
-
-  input, select, textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border-color .2s;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(108,99,255,.15);
-  }
-
-  select option { background: var(--surface); }
-
-  textarea { resize: vertical; min-height: 60px; }
-
-  /* TAGS */
-  .tag-input-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px;
-    min-height: 44px;
-    cursor: text;
-  }
-
-  .tag {
-    background: rgba(108,99,255,.15);
-    border: 1px solid rgba(108,99,255,.3);
-    color: var(--accent);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .tag-remove {
-    cursor: pointer;
-    opacity: .6;
-    transition: opacity .2s;
-    font-size: 13px;
-    line-height: 1;
-  }
-
-  .tag-remove:hover { opacity: 1; color: var(--accent2); }
-
-  .tag-input {
-    background: none;
-    border: none;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    outline: none;
-    flex: 1;
-    min-width: 80px;
-    padding: 2px 4px;
-  }
-
-  /* BUTTONS */
-  .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all .2s;
-    width: 100%;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(108,99,255,.3);
-  }
-
-  .btn-primary:hover {
-    background: #7c75ff;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(108,99,255,.45);
-  }
-
-  .btn-primary:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-  .btn-danger {
-    background: rgba(255,101,132,.1);
-    color: var(--accent2);
-    border: 1px solid rgba(255,101,132,.3);
-  }
-
-  .btn-danger:hover { background: rgba(255,101,132,.2); }
-
-  /* STATS ROW */
-  .stats-row {
-    grid-column: 2;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
-  .stat-card.c1::after { background: var(--accent); }
-  .stat-card.c2::after { background: var(--accent3); }
-  .stat-card.c3::after { background: #f093fb; }
-  .stat-card.c4::after { background: #fda085; }
-
-  .stat-value {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* LEAD TABLE */
-  .lead-panel {
-    grid-column: 2;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .lead-panel-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .lead-panel-title {
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .badge {
-    background: rgba(108,99,255,.15);
-    color: var(--accent);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
-
-  .lead-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .btn-sm {
-    padding: 7px 14px;
-    font-size: 12px;
-    width: auto;
-  }
-
-  /* TABLE */
-  .table-wrap {
-    overflow-x: auto;
-    max-height: 480px;
-    overflow-y: auto;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-
-  thead {
-    position: sticky;
-    top: 0;
-    background: var(--surface2);
-    z-index: 2;
-  }
-
-  th {
-    text-align: left;
-    padding: 10px 16px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 500;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-
-  td {
-    padding: 10px 16px;
-    border-bottom: 1px solid rgba(42,42,56,.5);
-    vertical-align: middle;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  tr:hover td { background: rgba(108,99,255,.04); }
-
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
-  }
-
-  .pill-new { background: rgba(108,99,255,.15); color: var(--accent); }
-  .pill-pushed { background: rgba(67,233,123,.12); color: var(--accent3); }
-  .pill-sequence { background: rgba(253,160,133,.12); color: #fda085; }
-  .pill-replied { background: rgba(255,101,132,.12); color: var(--accent2); }
-
-  /* PROGRESS */
-  .progress-bar {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #a78bfa);
-    border-radius: 2px;
-    transition: width .5s ease;
-  }
-
-  /* LOG */
-  .log-panel {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px;
-    font-family: var(--mono);
-    font-size: 11px;
-    max-height: 150px;
-    overflow-y: auto;
-    margin-top: 16px;
-  }
-
-  .log-line {
-    line-height: 1.8;
-    border-bottom: 1px solid rgba(42,42,56,.3);
-    padding-bottom: 2px;
-    animation: fadeIn .3s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-
-  .log-line.ok { color: var(--accent3); }
-  .log-line.err { color: var(--accent2); }
-  .log-line.info { color: var(--muted); }
-  .log-line.warn { color: #fda085; }
-
-  /* SPINNER */
-  .spinner {
-    width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,.2);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    display: none;
-  }
-
-  .spinning .spinner { display: block; }
-  .spinning .btn-icon { display: none; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* TABS */
-  .tab-bar {
-    display: flex;
-    gap: 2px;
-    padding: 16px 24px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .tab {
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 6px 6px 0 0;
-    color: var(--muted);
-    transition: all .2s;
-    border: 1px solid transparent;
-    border-bottom: none;
-    position: relative;
-    bottom: -1px;
-  }
-
-  .tab:hover { color: var(--text); }
-
-  .tab.active {
-    background: var(--surface);
-    color: var(--text);
-    border-color: var(--border);
-    border-bottom-color: var(--surface);
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* SEQUENCES */
-  .seq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px;
-  }
-
-  .seq-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    transition: border-color .2s;
-  }
-
-  .seq-item:hover { border-color: rgba(108,99,255,.4); }
-
-  .seq-day {
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    min-width: 48px;
-    text-align: center;
-  }
-
-  .seq-info { flex: 1; }
-
-  .seq-subject {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-
-  .seq-preview {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-
-  .empty-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    opacity: .4;
-  }
-
-  .empty-text {
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-
-  /* TOAST */
-  .toast-wrap {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 100;
-  }
-
-  .toast {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 13px;
-    font-family: var(--mono);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: slideUp .3s ease;
-    max-width: 320px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.4);
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: none; }
-  }
-
-  .toast.ok { border-color: rgba(67,233,123,.3); }
-  .toast.err { border-color: rgba(255,101,132,.3); }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* INBOUND SECTION */
-  .inbound-card {
-    background: linear-gradient(135deg, rgba(67,233,123,.05), rgba(108,99,255,.05));
-    border: 1px solid rgba(67,233,123,.2);
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 16px 0;
-  }
-
-  .api-status {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    font-family: var(--mono);
-    font-size: 11px;
-  }
-
-  .api-ok { color: var(--accent3); }
-  .api-err { color: var(--accent2); }
-
-  /* CHECKBOX */
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-
-  .checkbox-label input { width: auto; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PraxisNova – Lead Command Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0f1e; color: #e2e8f0; min-height: 100vh; display: flex; }
+    .sidebar { width: 300px; background: #0d1426; border-right: 1px solid #1e2d4a; padding: 24px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
+    .logo { font-size: 20px; font-weight: 700; color: #fff; }
+    .logo span { color: #3b82f6; }
+    .config-section h3 { font-size: 11px; letter-spacing: 1.5px; color: #64748b; text-transform: uppercase; margin-bottom: 12px; }
+    .config-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .config-field label { font-size: 12px; color: #94a3b8; }
+    .config-field input { background: #1a2540; border: 1px solid #2d3f5e; border-radius: 6px; padding: 8px 10px; color: #e2e8f0; font-size: 12px; font-family: monospace; }
+    .config-field input:focus { outline: none; border-color: #3b82f6; }
+    .btn-save { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
+    .btn-save:hover { background: #1d4ed8; }
+    .status-badge { background: #0f2a1a; border: 1px solid #166534; border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #4ade80; display: inline-flex; align-items: center; gap: 6px; }
+    .status-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { background: #0d1f35; border: 1px solid #1e2d4a; border-radius: 10px; padding: 12px; }
+    .stat-card .value { font-size: 24px; font-weight: 700; color: #3b82f6; }
+    .stat-card .label { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .tabs { display: flex; gap: 2px; padding: 16px 24px 0; border-bottom: 1px solid #1e2d4a; background: #0a0f1e; }
+    .tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.2s; border-bottom: 2px solid transparent; }
+    .tab.active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.08); }
+    .tab-content { display: none; flex: 1; overflow-y: auto; padding: 24px; }
+    .tab-content.active { display: block; }
+    .search-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .search-header p { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+    .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .search-input { flex: 1; background: #0d1426; border: 1px solid #2d3f5e; border-radius: 10px; padding: 12px 16px; color: #e2e8f0; font-size: 15px; }
+    .search-input:focus { outline: none; border-color: #3b82f6; }
+    .search-input::placeholder { color: #3d5070; }
+    .btn-search { background: #2563eb; color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 0.2s; }
+    .btn-search:hover { background: #1d4ed8; }
+    .btn-demo { background: #1a2540; color: #f59e0b; border: 1px solid #2d3f5e; border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #2d3f5e; background: #0d1426; color: #94a3b8; transition: all 0.2s; }
+    .chip.active { background: #1e3a5f; border-color: #3b82f6; color: #60a5fa; }
+    .results-count { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+    .results-count span { color: #3b82f6; font-weight: 600; }
+    .lead-card { background: #0d1426; border: 1px solid #1e2d4a; border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 16px; transition: border-color 0.2s; }
+    .lead-card:hover { border-color: #2d3f5e; }
+    .lead-avatar { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
+    .lead-info { flex: 1; min-width: 0; }
+    .lead-name { font-size: 15px; font-weight: 600; color: #f1f5f9; margin-bottom: 4px; }
+    .lead-meta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .lead-meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b; }
+    .lead-email { font-size: 12px; color: #3b82f6; margin-top: 4px; font-family: monospace; }
+    .lead-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    .status-in-sequence { background: #1a3a1a; border: 1px solid #16a34a; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: #4ade80; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .status-recently-contacted { background: #1a2a3a; border: 1px solid #2563eb; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: #60a5fa; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .status-do-not-contact { background: #2a1a1a; border: 1px solid #dc2626; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: #f87171; display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: default; }
+    .status-pulse { width: 7px; height: 7px; border-radius: 50%; animation: pulse 2s infinite; }
+    .status-in-sequence .status-pulse { background: #4ade80; }
+    .status-recently-contacted .status-pulse { background: #60a5fa; }
+    .status-do-not-contact .status-pulse { background: #f87171; animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .btn-crm { background: #1a2540; color: #94a3b8; border: 1px solid #2d3f5e; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .btn-crm:hover { background: #22304f; color: #e2e8f0; }
+    .btn-sequence { background: #1e3a8a; color: #93c5fd; border: 1px solid #2563eb; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+    .btn-sequence:hover { background: #1d4ed8; color: white; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .empty-state p { color: #64748b; font-size: 14px; }
+    .crm-table { width: 100%; border-collapse: collapse; }
+    .crm-table th { text-align: left; padding: 10px 14px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #1e2d4a; }
+    .crm-table td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid #0d1426; vertical-align: middle; }
+    .crm-table tr:hover td { background: #0d1426; }
+    .crm-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .crm-badge.active { background: #0f2a1a; color: #4ade80; border: 1px solid #166534; }
+    .crm-badge.recent { background: #0d1f35; color: #60a5fa; border: 1px solid #1e3a8a; }
+    .crm-badge.dnc { background: #2a1a1a; color: #f87171; border: 1px solid #7f1d1d; }
+    .crm-badge.completed { background: #1a1a2a; color: #a78bfa; border: 1px solid #4c1d95; }
+    .tooltip-wrapper { position: relative; display: inline-block; }
+    .tooltip-text { visibility: hidden; background: #1e2d4a; color: #e2e8f0; text-align: center; border-radius: 6px; padding: 6px 10px; font-size: 11px; white-space: nowrap; position: absolute; z-index: 10; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; pointer-events: none; border: 1px solid #2d3f5e; }
+    .tooltip-wrapper:hover .tooltip-text { visibility: visible; opacity: 1; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #0a0f1e; } ::-webkit-scrollbar-thumb { background: #2d3f5e; border-radius: 3px; }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    PraxisNova <span style="color:var(--muted);font-weight:400">/ Sales Automation</span>
+<div class="sidebar">
+  <div><div class="logo">PraxisNova <span>AI</span> · Lead Center</div></div>
+  <div class="config-section">
+    <h3>Konfiguration</h3>
+    <div class="config-field"><label>HubSpot API Key</label><input type="password" id="hubspotKey" placeholder="pat-eu1-..." /></div>
+    <div class="config-field"><label>Brevo API Key</label><input type="password" id="brevoKey" placeholder="xkeysib-..." /></div>
+    <div class="config-field"><label>Brevo List ID (Sequence)</label><input type="text" id="brevoListId" value="3" /></div>
+    <div class="config-field"><label>Absender E-Mail</label><input type="text" id="senderEmail" value="hertle.anjuli@praxisnovaai.com" /></div>
+    <button class="btn-save" onclick="saveConfig()">💾 Konfiguration speichern</button>
   </div>
-  <div class="status-bar">
-    <div class="status-item"><div class="status-dot"></div> Google Places</div>
-    <div class="status-item"><div class="status-dot"></div> HubSpot</div>
-    <div class="status-item"><div class="status-dot"></div> Brevo</div>
-    <div class="status-item" style="color:var(--muted)"><div class="status-dot" style="background:var(--muted);box-shadow:none"></div> Vercel Webhook</div>
-  </div>
-</header>
-
-<main>
-
-  <!-- CONFIG PANEL -->
-  <aside class="config-panel">
-
-    <!-- SEARCH CONFIG -->
-    <div class="card">
-      <div class="section-label">01 — Lead-Suche</div>
-      <div class="card-title">🔍 Google Places API</div>
-
-      <div class="form-group">
-        <label>Branche / Keyword</label>
-        <div class="tag-input-wrap" id="keywordWrap">
-          <span class="tag">Bauunternehmen <span class="tag-remove" onclick="removeTag(this)">×</span></span>
-          <span class="tag">Architekturbüro <span class="tag-remove" onclick="removeTag(this)">×</span></span>
-          <span class="tag">Immobilien <span class="tag-remove" onclick="removeTag(this)">×</span></span>
-          <input class="tag-input" placeholder="+ Keyword, Enter" id="keywordInput" onkeydown="addTag(event,'keywordWrap')">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Region</label>
-        <select id="region">
-          <option value="Deutschland">Deutschland (gesamt)</option>
-          <option value="Bayern">Bayern</option>
-          <option value="Baden-Württemberg" selected>Baden-Württemberg</option>
-          <option value="NRW">Nordrhein-Westfalen</option>
-          <option value="Hessen">Hessen</option>
-          <option value="Österreich">Österreich</option>
-          <option value="Schweiz">Schweiz</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Leads pro Durchlauf</label>
-        <input type="number" id="maxLeads" value="20" min="5" max="60">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px">Max ~60 kostenlos/Tag · 10k/Monat gratis</div>
-      </div>
-
-      <button class="btn btn-primary" id="scrapeBtn" onclick="startScraping()">
-        <span class="btn-icon">⚡ Leads generieren</span>
-        <div class="spinner"></div>
-      </button>
-    </div>
-
-    <!-- OUTREACH CONFIG -->
-    <div class="card">
-      <div class="section-label">02 — Outreach</div>
-      <div class="card-title">📧 Sequenz-Einstellungen</div>
-
-      <div class="form-group">
-        <label>Absender-Name</label>
-        <input type="text" id="senderName" value="Anjuli Hertle">
-      </div>
-
-      <div class="form-group">
-        <label>Absender-Email</label>
-        <input type="email" id="senderEmail" value="hertle.anjuli@praxisnovaai.com">
-      </div>
-
-      <div class="form-group">
-        <label>Calendly-Link</label>
-        <input type="text" id="calendlyLink" value="https://calendly.com/meyer-samantha-praxisnovaai/30min">
-      </div>
-
-      <div class="form-group">
-        <label>Brevo Listen-ID</label>
-        <input type="text" id="brevoListId" placeholder="z.B. 5" id="brevoListId">
-      </div>
-
-      <button class="btn btn-outline btn-sm" onclick="pushSelectedToSequence()" style="width:100%">
-        📬 Auswahl → Brevo Sequenz
-      </button>
-    </div>
-
-    <!-- API STATUS -->
-    <div class="card">
-      <div class="section-label">03 — API Status</div>
-      <div class="api-status"><span>Google Places</span> <span class="api-ok">✓ Aktiv</span></div>
-      <div class="api-status"><span>HubSpot CRM</span> <span class="api-ok">✓ Verbunden</span></div>
-      <div class="api-status"><span>Brevo</span> <span class="api-ok">✓ Verbunden</span></div>
-      <div class="api-status"><span>Calendly</span> <span class="api-ok">✓ Link gesetzt</span></div>
-      <div class="api-status"><span>Vercel Webhook</span> <span class="api-err">⚠ Ausstehend</span></div>
-    </div>
-
-  </aside>
-
-  <!-- STATS ROW -->
-  <div class="stats-row">
-    <div class="stat-card c1">
-      <div class="stat-value" id="statTotal">0</div>
-      <div class="stat-label">Leads gesamt</div>
-    </div>
-    <div class="stat-card c2">
-      <div class="stat-value" id="statPushed">0</div>
-      <div class="stat-label">In HubSpot</div>
-    </div>
-    <div class="stat-card c3">
-      <div class="stat-value" id="statSequence">0</div>
-      <div class="stat-label">In Sequenz</div>
-    </div>
-    <div class="stat-card c4">
-      <div class="stat-value" id="statReplied">0</div>
-      <div class="stat-label">Geantwortet</div>
+  <div id="configStatus" style="display:none"><div class="status-badge"><div class="status-dot"></div> Konfiguriert</div></div>
+  <div>
+    <h3 style="font-size:11px;letter-spacing:1.5px;color:#64748b;text-transform:uppercase;margin-bottom:12px;">Statistiken</h3>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="value" id="statTotal">0</div><div class="label">Leads gesamt</div></div>
+      <div class="stat-card"><div class="value" id="statContacted">0</div><div class="label">Kontaktiert</div></div>
+      <div class="stat-card"><div class="value" id="statInCRM">0</div><div class="label">Im CRM</div></div>
+      <div class="stat-card"><div class="value" id="statReplied">0</div><div class="label">Antworten</div></div>
     </div>
   </div>
-
-  <!-- LEAD PANEL -->
-  <div class="lead-panel">
-    <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('leads',this)">Leads</div>
-      <div class="tab" onclick="switchTab('sequence',this)">Email-Sequenz</div>
-      <div class="tab" onclick="switchTab('inbound',this)">Inbound</div>
+  <div id="refinedFilters" style="display:none">
+    <h3 style="font-size:11px;letter-spacing:1.5px;color:#64748b;text-transform:uppercase;margin-bottom:12px;">Suche verfeinern</h3>
+    <div class="config-field">
+      <label>Branche</label>
+      <select id="filterIndustry" style="background:#1a2540;border:1px solid #2d3f5e;border-radius:6px;padding:8px;color:#e2e8f0;font-size:12px;" onchange="applyFilters()">
+        <option value="">Alle Branchen</option>
+        <option value="bau">Bau</option>
+        <option value="immobilien">Immobilien</option>
+        <option value="architektur">Architektur</option>
+        <option value="facility">Facility</option>
+      </select>
     </div>
-
-    <!-- LEADS TAB -->
-    <div class="tab-content active" id="tab-leads">
-      <div class="lead-panel-header">
-        <div class="lead-panel-title">
-          Gefundene Leads
-          <span class="badge" id="leadCount">0</span>
-        </div>
-        <div class="lead-actions">
-          <button class="btn btn-outline btn-sm" onclick="selectAll()">Alle wählen</button>
-          <button class="btn btn-outline btn-sm" onclick="pushAllToHubSpot()">→ HubSpot</button>
-          <button class="btn btn-primary btn-sm" onclick="pushSelectedToSequence()">→ Brevo Sequenz</button>
-          <button class="btn btn-outline btn-sm" onclick="exportCSV()">↓ CSV</button>
-        </div>
-      </div>
-
-      <div class="table-wrap" id="tableWrap">
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">📡</div>
-          <div class="empty-text">Noch keine Leads — starte die Suche links</div>
-        </div>
-        <table id="leadTable" style="display:none">
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="selectAllCb" onchange="toggleAll(this)"></th>
-              <th>Firma</th>
-              <th>Adresse</th>
-              <th>Telefon</th>
-              <th>Website</th>
-              <th>Bewertung</th>
-              <th>Status</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody id="leadTbody"></tbody>
-        </table>
-      </div>
-
-      <div style="padding:16px 24px">
-        <div id="progressWrap" style="display:none">
-          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">
-            <span id="progressLabel">Suche läuft...</span>
-            <span id="progressPct">0%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-        </div>
-        <div class="log-panel" id="logPanel"></div>
-      </div>
+    <div class="config-field">
+      <label>Region (DACH)</label>
+      <select id="filterRegion" style="background:#1a2540;border:1px solid #2d3f5e;border-radius:6px;padding:8px;color:#e2e8f0;font-size:12px;" onchange="applyFilters()">
+        <option value="">Gesamte DACH-Region</option>
+        <option value="de">🇩🇪 Deutschland</option>
+        <option value="at">🇦🇹 Österreich</option>
+        <option value="ch">🇨🇭 Schweiz</option>
+      </select>
     </div>
+  </div>
+</div>
 
-    <!-- SEQUENCE TAB -->
-    <div class="tab-content" id="tab-sequence">
-      <div class="seq-list" id="seqList">
-        <!-- populated by JS -->
-      </div>
-    </div>
-
-    <!-- INBOUND TAB -->
-    <div class="tab-content" id="tab-inbound">
-      <div style="padding:20px">
-        <div class="card inbound-card" style="margin-bottom:16px">
-          <div class="card-title">🌐 Website-Formular → HubSpot</div>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">
-            Wenn jemand das Kontaktformular auf <strong style="color:var(--text)">praxisnovaai.com</strong> ausfüllt, 
-            wird der Kontakt automatisch in HubSpot angelegt und ihr erhaltet eine Gmail-Benachrichtigung.
-          </p>
-          <div style="font-family:var(--mono);font-size:11px;background:var(--bg);padding:14px;border-radius:8px;border:1px solid var(--border)">
-            <div style="color:var(--accent);margin-bottom:8px">// Formular-Code für praxisnovaai.com</div>
-            <div style="color:var(--muted)">POST → /api/inbound-contact</div>
-            <div style="color:var(--muted)">Felder: name, email, company, message</div>
-            <div style="color:var(--accent3);margin-top:6px">→ HubSpot Contact erstellen</div>
-            <div style="color:var(--accent3)">→ Gmail Alert senden</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📊 Inbound-Leads <span class="badge">0</span></div>
-          <div class="empty-state" style="padding:30px 20px">
-            <div class="empty-icon">📥</div>
-            <div class="empty-text">Noch keine Inbound-Anfragen eingegangen</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+<div class="main">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('leads')">🔍 Lead Finder</div>
+    <div class="tab" onclick="showTab('crm')">📋 CRM</div>
+    <div class="tab" onclick="showTab('sequences')">✉️ E-Mail Sequenzen</div>
+    <div class="tab" onclick="showTab('guide')">📖 Anleitung</div>
   </div>
 
-</main>
+  <div id="tab-leads" class="tab-content active">
+    <div class="search-header">
+      <h2>Lead Finder</h2>
+      <p>Finde Entscheidungsträger aus Bau und Immobilien in der DACH-Region</p>
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="searchInput" type="text" placeholder="z.B. Bauunternehmen Muenchen, Immobilienmakler Hamburg..." onkeydown="if(event.key==='Enter')runSearch()" />
+      <button class="btn-search" onclick="runSearch()">🔍 Suchen</button>
+      <button class="btn-demo" onclick="loadDemo()">⚡ Demo</button>
+    </div>
+    <div class="filter-chips">
+      <div class="chip active" onclick="setChip(this,'')">Alle</div>
+      <div class="chip" onclick="setChip(this,'bau')">🏗️ Bau</div>
+      <div class="chip" onclick="setChip(this,'immobilien')">🏢 Immobilien</div>
+      <div class="chip" onclick="setChip(this,'architektur')">📐 Architektur</div>
+      <div class="chip" onclick="setChip(this,'facility')">🔧 Facility</div>
+    </div>
+    <div class="results-count" id="resultsCount" style="display:none"></div>
+    <div id="leadResults"></div>
+  </div>
 
-<!-- TOAST CONTAINER -->
-<div class="toast-wrap" id="toastWrap"></div>
+  <div id="tab-crm" class="tab-content">
+    <div class="search-header"><h2>CRM — Alle Leads</h2><p>Übersicht aller exportierten Kontakte und ihr aktueller Status</p></div>
+    <div id="crmContent"></div>
+  </div>
+
+  <div id="tab-sequences" class="tab-content">
+    <div class="search-header"><h2>E-Mail Sequenzen</h2><p>Aktive Outbound-Sequenz für DACH Bau &amp; Immobilien</p></div>
+    <div style="background:#0d1426;border:1px solid #1e2d4a;border-radius:12px;padding:20px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="font-size:16px;font-weight:600;">Outbound Bau DACH — 6 E-Mail Sequenz</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">Brevo Automation ID: 1 · Liste #3</div>
+        </div>
+        <div class="status-badge"><div class="status-dot"></div> Aktiv</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E1</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 1</div><div style="font-size:10px;color:#94a3b8;">12 Std. pro Woche</div></div>
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E2</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 4</div><div style="font-size:10px;color:#94a3b8;">Was kostet Verwaltung?</div></div>
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E3</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 8</div><div style="font-size:10px;color:#94a3b8;">8 Minuten statt 45</div></div>
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E4</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 13</div><div style="font-size:10px;color:#94a3b8;">Eine direkte Frage</div></div>
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E5</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 19</div><div style="font-size:10px;color:#94a3b8;">Was andere umsetzen</div></div>
+        <div style="background:#0a0f1e;border:1px solid #1e2d4a;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:13px;font-weight:700;color:#3b82f6;">E6</div><div style="font-size:10px;color:#64748b;margin:3px 0;">Tag 26</div><div style="font-size:10px;color:#94a3b8;">Letzte Nachricht</div></div>
+      </div>
+    </div>
+    <div style="background:#0d1e10;border:1px solid #166534;border-radius:12px;padding:16px;font-size:13px;color:#4ade80;">✅ Exit-Bedingung: Sequenz stoppt sofort wenn Lead antwortet &nbsp;·&nbsp; 🔒 Jede E-Mail enthält Abmelde-Link (DSGVO-konform)</div>
+  </div>
+
+  <div id="tab-guide" class="tab-content">
+    <div class="search-header"><h2>Anleitung</h2><p>So verwendest du das Lead Center</p></div>
+    <div style="background:#0d1426;border:1px solid #1e2d4a;border-radius:12px;padding:24px;max-width:700px;">
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div style="display:flex;gap:14px;"><div style="font-size:24px;">🔍</div><div><div style="font-weight:600;margin-bottom:4px;">Leads suchen</div><div style="font-size:13px;color:#94a3b8;">Suchbegriff eingeben und Suchen klicken.</div></div></div>
+        <div style="display:flex;gap:14px;"><div style="font-size:24px;">⚡</div><div><div style="font-weight:600;margin-bottom:4px;">Sequenz starten</div><div style="font-size:13px;color:#94a3b8;">CRM + Sequence klicken — Lead wird ins CRM übertragen und die 6-E-Mail-Sequenz startet automatisch.</div></div></div>
+        <div style="display:flex;gap:14px;"><div style="font-size:24px;">🟢</div><div><div style="font-weight:600;margin-bottom:4px;">In Sequenz</div><div style="font-size:13px;color:#94a3b8;">Lead befindet sich noch in der aktiven 26-Tage-Sequenz.</div></div></div>
+        <div style="display:flex;gap:14px;"><div style="font-size:24px;">🔵</div><div><div style="font-weight:600;margin-bottom:4px;">Vor kurzem kontaktiert</div><div style="font-size:13px;color:#94a3b8;">Sequenz endete vor weniger als 3 Monaten. Noch zu früh für erneuten Kontakt.</div></div></div>
+        <div style="display:flex;gap:14px;"><div style="font-size:24px;">🚫</div><div><div style="font-weight:600;margin-bottom:4px;">Do Not Contact</div><div style="font-size:13px;color:#94a3b8;">Lead hat sich abgemeldet. Niemals kontaktieren.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-// ============================================================
-// CONFIG — API KEYS
-// ============================================================
-const CONFIG = {
-  GOOGLE_PLACES_KEY: 'AIzaSyAUbWDLdKXpOKB0Dy-NZPZ4UHne_XwkEhg',
-  HUBSPOT_TOKEN: 'CiRldTEtYzBmZS1jNjQyLTRjZDl0GVlZi1kOTFhZGQxNmE4ZDAQocfIRhjbh9EqKhkABeaRgn2tNy4wkhJCZpZ18DVB3sLPSebuSgNldTE',
-  BREVO_KEY: 'xkeysib-0365162db8b4f29b871c7b022421d26abf4151af3cee',
-  CALENDLY: 'https://calendly.com/meyer-samantha-praxisnovaai/30min',
-  HUBSPOT_PORTAL: '147989409',
-};
+const SEQUENCE_DAYS = 26;
+const RECENTLY_DAYS = 90;
+const STORAGE_CONTACTS = 'praxisnova_contacts';
+const STORAGE_CONFIG = 'praxisnova_config';
+let config = {};
 
-// ============================================================
-// STATE
-// ============================================================
-let leads = [];
-let scraping = false;
-
-// ============================================================
-// EMAIL SEQUENCES
-// ============================================================
-const EMAIL_SEQUENCES = [
-  {
-    day: 1,
-    subject: "KI-gestützte Prozessoptimierung für {{COMPANY}}",
-    preview: "Wie wir Bauunternehmen 30% Zeitersparnis bringen...",
-    body: `Hallo {{FIRSTNAME}},\n\nwir helfen Unternehmen wie {{COMPANY}} dabei, repetitive Prozesse mit KI zu automatisieren — von der Angebotserstellung bis zur Kundenkommunikation.\n\nHaben Sie 30 Minuten für ein kurzes Gespräch?\n\n→ {{CALENDLY}}\n\nViele Grüße,\nAnjuli Hertle\nPraxisNova AI`
-  },
-  {
-    day: 4,
-    subject: "3 konkrete KI-Anwendungen für die Baubranche",
-    preview: "Automatisierte Angebote, Dokumentenverarbeitung...",
-    body: `Hallo {{FIRSTNAME}},\n\nhier 3 Beispiele, wie wir gerade Unternehmen in Ihrer Branche unterstützen:\n\n1. Automatisierte Angebotserstellung (-70% Zeit)\n2. KI-gestützte Dokumentenprüfung\n3. Automatische Kundenanfragen-Qualifizierung\n\nPasst eines davon zu Ihren Herausforderungen?\n\n→ {{CALENDLY}}\n\nBeste Grüße,\nAnjuli`
-  },
-  {
-    day: 8,
-    subject: "Kurze Frage zu {{COMPANY}}",
-    preview: "Was ist Ihr größter Zeitfresser aktuell?",
-    body: `Hallo {{FIRSTNAME}},\n\nkurze Frage: Was kostet Sie und Ihr Team aktuell die meiste Zeit — Angebote, Dokumentation oder Kundenkommunikation?\n\nJe nachdem, hätte ich eine konkrete Idee für Sie.\n\n→ {{CALENDLY}}\n\nAnjuli`
-  },
-  {
-    day: 13,
-    subject: "Fallstudie: Bauunternehmen spart 12h/Woche",
-    preview: "Mit welchem System wir das erreicht haben...",
-    body: `Hallo {{FIRSTNAME}},\n\nein Bauunternehmen aus Bayern hat mit unserem System in 3 Wochen:\n• 12h/Woche weniger Verwaltungsaufwand\n• Angebote in 4 statt 45 Minuten\n• 40% mehr Kundenanfragen bearbeitet\n\nMöchten Sie sehen, wie das aussieht?\n\n→ {{CALENDLY}}\n\nAnjuli`
-  },
-  {
-    day: 19,
-    subject: "Letzte Nachricht von mir",
-    preview: "Ich melde mich ein letztes Mal...",
-    body: `Hallo {{FIRSTNAME}},\n\nich melde mich ein letztes Mal — ich verstehe, wenn der Zeitpunkt gerade nicht passt.\n\nFalls sich das ändert: Ich bin für Sie da.\n\n→ {{CALENDLY}}\n\nAlles Gute,\nAnjuli Hertle\nPraxisNova AI`
-  },
-  {
-    day: 26,
-    subject: "Auf Wiedersehen von PraxisNova",
-    preview: "Tür bleibt offen...",
-    body: `Hallo {{FIRSTNAME}},\n\nda ich nichts von Ihnen gehört habe, werde ich mich aus Ihrem Postfach zurückziehen.\n\nSollten Sie in Zukunft Interesse an KI-Automatisierung haben — meine Tür steht immer offen.\n\n→ {{CALENDLY}}\n\nHerzliche Grüße,\nAnjuli`
-  }
-];
-
-// ============================================================
-// RENDER SEQUENCES
-// ============================================================
-function renderSequences() {
-  const list = document.getElementById('seqList');
-  list.innerHTML = EMAIL_SEQUENCES.map(seq => `
-    <div class="seq-item">
-      <div class="seq-day">Tag ${seq.day}</div>
-      <div class="seq-info">
-        <div class="seq-subject">${seq.subject.replace('{{COMPANY}}','[Firma]')}</div>
-        <div class="seq-preview">${seq.preview}</div>
-      </div>
-      <span class="status-pill pill-pushed" style="font-size:10px;padding:2px 8px">Bereit</span>
-    </div>
-  `).join('');
+function loadConfig() {
+  try {
+    config = JSON.parse(localStorage.getItem(STORAGE_CONFIG) || '{}');
+    if (config.hubspotKey) document.getElementById('hubspotKey').value = config.hubspotKey;
+    if (config.brevoKey) document.getElementById('brevoKey').value = config.brevoKey;
+    if (config.brevoListId) document.getElementById('brevoListId').value = config.brevoListId;
+    if (config.senderEmail) document.getElementById('senderEmail').value = config.senderEmail;
+    if (config.hubspotKey && config.brevoKey) document.getElementById('configStatus').style.display = 'block';
+  } catch(e) {}
 }
 
-renderSequences();
-
-// ============================================================
-// TAG INPUT
-// ============================================================
-function addTag(e, wrapId) {
-  if (e.key !== 'Enter') return;
-  const input = e.target;
-  const val = input.value.trim();
-  if (!val) return;
-  const wrap = document.getElementById(wrapId);
-  const tag = document.createElement('span');
-  tag.className = 'tag';
-  tag.innerHTML = `${val} <span class="tag-remove" onclick="removeTag(this)">×</span>`;
-  wrap.insertBefore(tag, input);
-  input.value = '';
-  e.preventDefault();
+function saveConfig() {
+  config = {
+    hubspotKey: document.getElementById('hubspotKey').value.trim(),
+    brevoKey: document.getElementById('brevoKey').value.trim(),
+    brevoListId: document.getElementById('brevoListId').value.trim() || '3',
+    senderEmail: document.getElementById('senderEmail').value.trim()
+  };
+  localStorage.setItem(STORAGE_CONFIG, JSON.stringify(config));
+  document.getElementById('configStatus').style.display = 'block';
+  showToast('✅ Konfiguration gespeichert!');
 }
 
-function removeTag(el) {
-  el.closest('.tag').remove();
+function getContacts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_CONTACTS) || '{}'); } catch(e) { return {}; }
 }
 
-function getKeywords() {
-  const wrap = document.getElementById('keywordWrap');
-  return [...wrap.querySelectorAll('.tag')].map(t => t.textContent.trim().replace('×','').trim());
+function saveContacts(contacts) {
+  localStorage.setItem(STORAGE_CONTACTS, JSON.stringify(contacts));
+  updateStats();
 }
 
-// ============================================================
-// LOG
-// ============================================================
-function log(msg, type = 'info') {
-  const panel = document.getElementById('logPanel');
-  const line = document.createElement('div');
-  line.className = `log-line ${type}`;
-  const time = new Date().toLocaleTimeString('de', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  line.textContent = `[${time}] ${msg}`;
-  panel.appendChild(line);
-  panel.scrollTop = panel.scrollHeight;
+function getContactStatus(email) {
+  const contacts = getContacts();
+  const entry = contacts[email.toLowerCase()];
+  if (!entry) return 'available';
+  if (entry.status === 'unsubscribed') return 'do_not_contact';
+  const daysSince = (Date.now() - entry.exportedAt) / (1000 * 60 * 60 * 24);
+  if (daysSince <= SEQUENCE_DAYS) return 'in_sequence';
+  if (daysSince <= RECENTLY_DAYS) return 'recently_contacted';
+  return 'available';
 }
 
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg, type = 'ok') {
-  const wrap = document.getElementById('toastWrap');
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.innerHTML = `<span>${type === 'ok' ? '✅' : '❌'}</span> ${msg}`;
-  wrap.appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+function getDaysRemaining(email) {
+  const entry = getContacts()[email.toLowerCase()];
+  if (!entry) return 0;
+  return Math.max(0, Math.ceil(SEQUENCE_DAYS - (Date.now() - entry.exportedAt) / (1000*60*60*24)));
 }
 
-// ============================================================
-// PROGRESS
-// ============================================================
-function setProgress(pct, label) {
-  document.getElementById('progressWrap').style.display = 'block';
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressPct').textContent = Math.round(pct) + '%';
-  document.getElementById('progressLabel').textContent = label;
+function getDaysSinceContact(email) {
+  const entry = getContacts()[email.toLowerCase()];
+  if (!entry) return 0;
+  return Math.floor((Date.now() - entry.exportedAt) / (1000*60*60*24));
 }
 
-// ============================================================
-// STATS
-// ============================================================
+function markExported(email, name, company) {
+  const contacts = getContacts();
+  contacts[email.toLowerCase()] = { exportedAt: Date.now(), status: 'exported', name, company };
+  saveContacts(contacts);
+}
+
 function updateStats() {
-  document.getElementById('statTotal').textContent = leads.length;
-  document.getElementById('statPushed').textContent = leads.filter(l => l.status === 'pushed' || l.status === 'sequence').length;
-  document.getElementById('statSequence').textContent = leads.filter(l => l.status === 'sequence').length;
-  document.getElementById('statReplied').textContent = leads.filter(l => l.status === 'replied').length;
-  document.getElementById('leadCount').textContent = leads.length;
+  const all = Object.values(getContacts());
+  document.getElementById('statTotal').textContent = all.length;
+  document.getElementById('statContacted').textContent = all.filter(c => c.exportedAt).length;
+  document.getElementById('statInCRM').textContent = all.filter(c => c.exportedAt).length;
+  document.getElementById('statReplied').textContent = all.filter(c => c.status === 'replied').length;
 }
 
-// ============================================================
-// SCRAPING — Google Places API
-// ============================================================
-async function startScraping() {
-  if (scraping) return;
-  scraping = true;
-
-  const btn = document.getElementById('scrapeBtn');
-  btn.classList.add('spinning');
-  btn.disabled = true;
-
-  const keywords = getKeywords();
-  const region = document.getElementById('region').value;
-  const maxLeads = parseInt(document.getElementById('maxLeads').value) || 20;
-
-  log(`🔍 Starte Suche: [${keywords.join(', ')}] in ${region}`, 'info');
-  setProgress(5, 'Verbinde mit Google Places...');
-
-  try {
-    let allResults = [];
-    const perKeyword = Math.ceil(maxLeads / keywords.length);
-
-    for (let i = 0; i < keywords.length; i++) {
-      const kw = keywords[i];
-      const pct = 10 + (i / keywords.length) * 70;
-      setProgress(pct, `Suche "${kw}" in ${region}...`);
-      log(`📍 Suche: ${kw} | ${region}`, 'info');
-
-      const query = encodeURIComponent(`${kw} ${region}`);
-      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${CONFIG.GOOGLE_PLACES_KEY}&language=de&region=de`;
-
-      try {
-        // Note: In production, this must go through a Vercel proxy to avoid CORS
-        // For now we use the proxy endpoint
-        const resp = await fetch(`/api/places?query=${query}`);
-        if (!resp.ok) throw new Error('API Error ' + resp.status);
-        const data = await resp.json();
-        if (data.results) {
-          allResults = allResults.concat(data.results.slice(0, perKeyword));
-          log(`✓ ${data.results.length} Ergebnisse für "${kw}"`, 'ok');
-        }
-      } catch(err) {
-        // Fallback: use demo data in development
-        log(`⚠ Proxy nicht verfügbar — verwende Demo-Daten für "${kw}"`, 'warn');
-        const demo = generateDemoLeads(kw, region, perKeyword);
-        allResults = allResults.concat(demo);
-      }
-    }
-
-    // Deduplicate
-    const seen = new Set();
-    allResults = allResults.filter(r => {
-      const key = r.name + r.formatted_address;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    }).slice(0, maxLeads);
-
-    setProgress(85, 'Verarbeite Ergebnisse...');
-
-    // Map to lead objects
-    const newLeads = allResults.map(r => ({
-      id: 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2,6),
-      name: r.name || '—',
-      address: r.formatted_address || r.vicinity || '—',
-      phone: r.formatted_phone_number || r.international_phone_number || '—',
-      website: r.website || '—',
-      email: r.email || '—',
-      rating: r.rating || '—',
-      place_id: r.place_id || '',
-      status: 'new',
-      selected: false,
-      pushed_hubspot: false,
-    }));
-
-    leads = [...leads, ...newLeads];
-    renderTable();
-    updateStats();
-
-    setProgress(100, `${newLeads.length} Leads gefunden!`);
-    log(`✅ ${newLeads.length} Leads erfolgreich geladen`, 'ok');
-    toast(`${newLeads.length} Leads gefunden!`);
-
-    setTimeout(() => {
-      document.getElementById('progressWrap').style.display = 'none';
-    }, 2000);
-
-  } catch(err) {
-    log(`❌ Fehler: ${err.message}`, 'err');
-    toast('Fehler bei der Lead-Suche', 'err');
+function renderStatusBadge(email, name, company) {
+  const status = getContactStatus(email);
+  if (status === 'do_not_contact') {
+    return `<div class="tooltip-wrapper"><div class="status-do-not-contact"><div class="status-pulse"></div>🚫 Do Not Contact</div><div class="tooltip-text">Hat Abmelde-Link geklickt!</div></div>`;
   }
-
-  scraping = false;
-  btn.classList.remove('spinning');
-  btn.disabled = false;
+  if (status === 'in_sequence') {
+    const days = getDaysRemaining(email);
+    return `<div class="tooltip-wrapper"><div class="status-in-sequence"><div class="status-pulse"></div>✅ In Sequenz</div><div class="tooltip-text">Noch ${days} Tag${days!==1?'e':''} aktiv</div></div>`;
+  }
+  if (status === 'recently_contacted') {
+    const days = getDaysSinceContact(email);
+    return `<div class="tooltip-wrapper"><div class="status-recently-contacted"><div class="status-pulse"></div>🔵 Vor kurzem kontaktiert</div><div class="tooltip-text">Vor ${days} Tagen · noch ${RECENTLY_DAYS-days} Tage warten</div></div>`;
+  }
+  return `<button class="btn-crm" onclick="exportToCRM('${email}','${name}','${company}',this)">+ CRM</button><button class="btn-sequence" onclick="exportWithSequence('${email}','${name}','${company}',this)">⚡ CRM + Sequence</button>`;
 }
 
-// ============================================================
-// DEMO DATA GENERATOR (Fallback)
-// ============================================================
-function generateDemoLeads(keyword, region, count) {
-  const companies = [
-    'Müller Bau GmbH', 'Schmidt Architekten', 'Weber Immobilien', 'Fischer Bauplanung',
-    'Becker & Partner', 'Hoffmann Bau AG', 'Koch Projektentwicklung', 'Richter Immobilien GmbH',
-    'Klein Architektur', 'Wolf Bauunternehmen', 'Braun Immobilien', 'Krause Bau KG',
-    'Neumann & Söhne', 'Zimmermann Bau', 'Schulz Architekten BDA', 'Lehmann Immobilien',
-    'Schreiber Bauplanung', 'Frank Projektbau', 'König Architekturwerk', 'Bauer Immobilien'
-  ];
-  const cities = {
-    'Bayern': ['München','Nürnberg','Augsburg','Regensburg','Würzburg'],
-    'Baden-Württemberg': ['Stuttgart','Karlsruhe','Heidelberg','Freiburg','Ulm'],
-    'NRW': ['Düsseldorf','Köln','Dortmund','Essen','Duisburg'],
-    'Deutschland': ['Berlin','Hamburg','Frankfurt','Leipzig','Dresden'],
-    'Österreich': ['Wien','Graz','Linz','Salzburg','Innsbruck'],
-    'Schweiz': ['Zürich','Basel','Bern','Genf','Lausanne'],
-  };
-  const cityList = cities[region] || cities['Deutschland'];
+let allResults = [], activeChip = '';
 
-  return Array.from({length: Math.min(count, companies.length)}, (_, i) => ({
-    name: companies[i] || `${keyword} ${region} ${i+1}`,
-    formatted_address: `${['Hauptstr','Bahnhofstr','Kirchgasse','Marktplatz'][i%4]}. ${10+i*3}, ${cityList[i % cityList.length]}`,
-    formatted_phone_number: `+49 ${700+i*3} ${1000000 + i*7777}`,
-    website: `https://www.${companies[i].toLowerCase().replace(/[^a-z]/g,'')}.de`,
-    rating: (3.5 + Math.random() * 1.5).toFixed(1),
-    place_id: 'demo_' + i,
-  }));
+async function runSearch() {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) return;
+  showLoading();
+  document.getElementById('refinedFilters').style.display = 'block';
+  try {
+    const res = await fetch(`/api/places?query=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    allResults = data.results || [];
+    applyFilters();
+  } catch(e) { showError('Fehler bei der Suche.'); }
 }
 
-// ============================================================
-// TABLE RENDERING
-// ============================================================
-function renderTable() {
-  const tbody = document.getElementById('leadTbody');
-  const empty = document.getElementById('emptyState');
-  const table = document.getElementById('leadTable');
+function setChip(el, value) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeChip = value;
+  applyFilters();
+}
 
-  if (leads.length === 0) {
-    empty.style.display = 'block';
-    table.style.display = 'none';
+function applyFilters() {
+  let filtered = [...allResults];
+  if (activeChip) filtered = filtered.filter(l => (l.industry||'').toLowerCase().includes(activeChip));
+  renderLeads(filtered);
+}
+
+function renderLeads(leads) {
+  const container = document.getElementById('leadResults');
+  const countEl = document.getElementById('resultsCount');
+  if (!leads.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>Keine Ergebnisse</h3><p>Versuche einen anderen Suchbegriff</p></div>`;
+    countEl.style.display = 'none';
     return;
   }
-
-  empty.style.display = 'none';
-  table.style.display = 'table';
-
-  tbody.innerHTML = leads.map(lead => `
-    <tr id="row_${lead.id}">
-      <td><input type="checkbox" ${lead.selected ? 'checked' : ''} onchange="toggleLead('${lead.id}',this)"></td>
-      <td title="${lead.name}">${lead.name}</td>
-      <td title="${lead.address}" style="color:var(--muted)">${lead.address}</td>
-      <td style="font-family:var(--mono);font-size:11px">${lead.phone}</td>
-      <td>${lead.website !== '—' ? `<a href="${lead.website}" target="_blank" style="color:var(--accent);text-decoration:none">${lead.website.replace('https://www.','')}</a>` : '—'}</td>
-      <td style="font-family:var(--mono)">${lead.rating} ${lead.rating !== '—' ? '⭐' : ''}</td>
-      <td>${statusPill(lead.status)}</td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button onclick="pushToHubSpot('${lead.id}')" title="→ HubSpot" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">HS</button>
-          <button onclick="pushToBrevo('${lead.id}')" title="→ Brevo" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.borderColor='var(--accent3)'" onmouseout="this.style.borderColor='var(--border)'">BR</button>
+  countEl.style.display = 'block';
+  countEl.innerHTML = `<span>${leads.length}</span> Leads gefunden`;
+  const colors = ['#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
+  container.innerHTML = leads.map((lead, i) => {
+    const initials = lead.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const color = colors[i % colors.length];
+    const hasEmail = !!lead.email;
+    const badgeHtml = hasEmail ? renderStatusBadge(lead.email, lead.name, lead.company||lead.name) : `<span style="font-size:12px;color:#475569;">Keine E-Mail</span>`;
+    return `<div class="lead-card">
+      <div class="lead-avatar" style="background:${color}20;color:${color};border:1px solid ${color}40;">${initials}</div>
+      <div class="lead-info">
+        <div class="lead-name">${lead.name}</div>
+        <div class="lead-meta">
+          ${lead.contact ? `<div class="lead-meta-item">👤 ${lead.contact}</div>` : ''}
+          ${lead.location ? `<div class="lead-meta-item">📍 ${lead.location}</div>` : ''}
+          ${lead.size ? `<div class="lead-meta-item">👥 ${lead.size}</div>` : ''}
         </div>
-      </td>
-    </tr>
-  `).join('');
+        ${hasEmail ? `<div class="lead-email">${lead.email}</div>` : ''}
+      </div>
+      <div class="lead-actions">${badgeHtml}</div>
+    </div>`;
+  }).join('');
 }
 
-function statusPill(status) {
-  const map = {
-    new: ['pill-new','Neu'],
-    pushed: ['pill-pushed','In HubSpot'],
-    sequence: ['pill-sequence','In Sequenz'],
-    replied: ['pill-replied','Geantwortet'],
-  };
-  const [cls, label] = map[status] || ['pill-new','Neu'];
-  return `<span class="status-pill ${cls}">${label}</span>`;
-}
-
-// ============================================================
-// SELECTION
-// ============================================================
-function toggleLead(id, cb) {
-  const lead = leads.find(l => l.id === id);
-  if (lead) lead.selected = cb.checked;
-}
-
-function toggleAll(cb) {
-  leads.forEach(l => l.selected = cb.checked);
-  renderTable();
-  document.getElementById('selectAllCb').checked = cb.checked;
-}
-
-function selectAll() {
-  leads.forEach(l => l.selected = true);
-  renderTable();
-  document.getElementById('selectAllCb').checked = true;
-}
-
-// ============================================================
-// HUBSPOT PUSH
-// ============================================================
-async function pushToHubSpot(id) {
-  const lead = leads.find(l => l.id === id);
-  if (!lead || lead.pushed_hubspot) return;
-
-  log(`↗ Push zu HubSpot: ${lead.name}`, 'info');
-
+async function exportToCRM(email, name, company, btn) {
+  btn.disabled = true; btn.textContent = '⏳';
   try {
-    const resp = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${CONFIG.HUBSPOT_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        properties: {
-          firstname: lead.name.split(' ')[0] || lead.name,
-          lastname: lead.name.split(' ').slice(1).join(' ') || '',
-          company: lead.name,
-          phone: lead.phone !== '—' ? lead.phone : '',
-          website: lead.website !== '—' ? lead.website : '',
-          address: lead.address,
-          hs_lead_status: 'IN_PROGRESS',
-          lead_source: 'Google Places API — PraxisNova Automation',
-        }
-      })
-    });
-
-    if (resp.ok || resp.status === 409) {
-      lead.status = 'pushed';
-      lead.pushed_hubspot = true;
-      log(`✅ ${lead.name} → HubSpot`, 'ok');
-      renderTable();
-      updateStats();
-    } else {
-      const err = await resp.json();
-      log(`❌ HubSpot Fehler: ${err.message}`, 'err');
-    }
-  } catch(err) {
-    log(`❌ HubSpot: ${err.message}`, 'err');
-  }
+    await callExportAPI(email, name, company, false);
+    markExported(email, name, company);
+    refreshCard(email);
+    showToast(`✅ ${name} ins CRM exportiert`);
+    updateCRMTab();
+  } catch(e) { btn.disabled = false; btn.textContent = '+ CRM'; showToast('❌ Fehler', true); }
 }
 
-async function pushAllToHubSpot() {
-  const selected = leads.filter(l => l.selected && !l.pushed_hubspot);
-  if (selected.length === 0) {
-    toast('Keine Leads ausgewählt', 'err');
-    return;
-  }
-  log(`↗ Push ${selected.length} Leads zu HubSpot...`, 'info');
-  for (const lead of selected) {
-    await pushToHubSpot(lead.id);
-    await sleep(300);
-  }
-  toast(`${selected.length} Leads → HubSpot`);
-}
-
-// ============================================================
-// BREVO PUSH
-// ============================================================
-async function pushToBrevo(id) {
-  const lead = leads.find(l => l.id === id);
-  if (!lead) return;
-
-  const listId = parseInt(document.getElementById('brevoListId').value) || 2;
-  if (!listId) {
-    toast('Bitte Brevo Listen-ID eingeben', 'err');
-    return;
-  }
-
-  log(`↗ Push zu Brevo: ${lead.name}`, 'info');
-
-  const email = lead.email !== '—' ? lead.email : `kontakt@${lead.website.replace('https://www.','').replace('https://','').split('/')[0] || 'example.com'}`;
-
+async function exportWithSequence(email, name, company, btn) {
+  btn.disabled = true; btn.innerHTML = '⏳ Exportiert...';
   try {
-    // Create/update contact
-    const resp = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: {
-        'api-key': CONFIG.BREVO_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        attributes: {
-          FIRSTNAME: lead.name.split(' ')[0] || lead.name,
-          LASTNAME: lead.name.split(' ').slice(1).join(' ') || '',
-          COMPANY: lead.name,
-          SMS: lead.phone !== '—' ? lead.phone : '',
-        },
-        listIds: [listId],
-        updateEnabled: true,
-      })
-    });
-
-    if (resp.ok || resp.status === 201 || resp.status === 204) {
-      lead.status = 'sequence';
-      log(`✅ ${lead.name} → Brevo Sequenz`, 'ok');
-      renderTable();
-      updateStats();
-    } else {
-      const err = await resp.json();
-      log(`❌ Brevo: ${err.message || JSON.stringify(err)}`, 'err');
-    }
-  } catch(err) {
-    log(`❌ Brevo: ${err.message}`, 'err');
-  }
+    await callExportAPI(email, name, company, true);
+    markExported(email, name, company);
+    refreshCard(email);
+    showToast(`⚡ ${name} — Sequenz gestartet!`);
+    updateCRMTab();
+  } catch(e) { btn.disabled = false; btn.innerHTML = '⚡ CRM + Sequence'; showToast('❌ Fehler', true); }
 }
 
-async function pushSelectedToSequence() {
-  const selected = leads.filter(l => l.selected);
-  if (selected.length === 0) {
-    toast('Keine Leads ausgewählt', 'err');
+async function callExportAPI(email, name, company, withSequence) {
+  const nameParts = name.split(' ');
+  const res = await fetch('/api/inbound-contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, company, firstname: nameParts[0], lastname: nameParts.slice(1).join(' ') || '', withSequence, hubspotKey: config.hubspotKey, brevoKey: config.brevoKey, brevoListId: config.brevoListId || '3' })
+  });
+  if (!res.ok) throw new Error('API error');
+  return res.json();
+}
+
+function refreshCard(email) {
+  document.querySelectorAll('.lead-card').forEach(card => {
+    const emailEl = card.querySelector('.lead-email');
+    if (emailEl && emailEl.textContent.toLowerCase() === email.toLowerCase()) {
+      const actionsEl = card.querySelector('.lead-actions');
+      const nameEl = card.querySelector('.lead-name');
+      if (actionsEl && nameEl) actionsEl.innerHTML = renderStatusBadge(email, nameEl.textContent, '');
+    }
+  });
+}
+
+function loadDemo() {
+  allResults = [
+    { name:'Mayer Bau GmbH', contact:'Thomas Mayer · Geschäftsführer', location:'München', size:'45 MA', email:'info@mayer-bau.de', industry:'bau' },
+    { name:'Immobilien Schulz & Partner', contact:'Klaus Schulz · Inhaber', location:'Hamburg', size:'12 MA', email:'k.schulz@schulz-immo.de', industry:'immobilien' },
+    { name:'Bauträger Hoffmann AG', contact:'Sandra Hoffmann · Vorstand', location:'Frankfurt', size:'120 MA', email:'s.hoffmann@hoffmann-ag.de', industry:'bau' },
+    { name:'ImmoInvest Weber KG', contact:'Martin Weber · Geschäftsführer', location:'Stuttgart', size:'28 MA', email:'m.weber@immoinvest.de', industry:'immobilien' },
+    { name:'Architekturbüro Keller', contact:'Dr. Anna Keller · Inhaberin', location:'Köln', size:'18 MA', email:'a.keller@buero-keller.de', industry:'architektur' },
+    { name:'Bau & Technik Fischer GmbH', contact:'Bernd Fischer · Geschäftsführer', location:'Düsseldorf', size:'67 MA', email:'fischer@bt-fischer.de', industry:'bau' },
+    { name:'Generalunternehmer Schmidt AG', contact:'Klaus Schmidt · CEO', location:'Berlin', size:'230 MA', email:'k.schmidt@schmidt-bau.de', industry:'bau' },
+    { name:'Facility Solutions GmbH', contact:'Peter Müller · Direktor', location:'Wien', size:'55 MA', email:'p.mueller@facility-sol.at', industry:'facility' },
+    { name:'Architekten Gruppe Zürich', contact:'Maria Ziegler · Partnerin', location:'Zürich', size:'22 MA', email:'m.ziegler@agz.ch', industry:'architektur' },
+  ];
+  document.getElementById('refinedFilters').style.display = 'block';
+  applyFilters();
+}
+
+function updateCRMTab() {
+  const contacts = getContacts();
+  const entries = Object.entries(contacts);
+  const content = document.getElementById('crmContent');
+  if (!entries.length) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><h3>Noch keine Leads</h3><p>Exportiere Leads aus dem Lead Finder</p></div>`;
     return;
   }
-  for (const lead of selected) {
-    await pushToHubSpot(lead.id);
-    await sleep(200);
-    await pushToBrevo(lead.id);
-    await sleep(200);
-  }
-  toast(`${selected.length} Leads → HubSpot + Brevo Sequenz`);
+  const rows = entries.map(([email, data]) => {
+    const status = getContactStatus(email);
+    const days = Math.floor((Date.now() - data.exportedAt) / (1000*60*60*24));
+    let badge = status === 'do_not_contact' ? `<span class="crm-badge dnc">🚫 Do Not Contact</span>`
+      : status === 'in_sequence' ? `<span class="crm-badge active">🟢 In Sequenz</span>`
+      : status === 'recently_contacted' ? `<span class="crm-badge recent">🔵 Vor kurzem kontaktiert</span>`
+      : `<span class="crm-badge completed">✅ Abgeschlossen</span>`;
+    return `<tr><td style="color:#f1f5f9;font-weight:500;">${data.name||'—'}</td><td style="color:#64748b;font-family:monospace;font-size:12px;">${email}</td><td style="color:#94a3b8;">${data.company||'—'}</td><td>${badge}</td><td style="color:#64748b;">${days} Tage</td></tr>`;
+  }).join('');
+  content.innerHTML = `<table class="crm-table"><thead><tr><th>Name</th><th>E-Mail</th><th>Unternehmen</th><th>Status</th><th>Kontaktiert vor</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// ============================================================
-// EXPORT CSV
-// ============================================================
-function exportCSV() {
-  if (leads.length === 0) { toast('Keine Leads zum Exportieren', 'err'); return; }
-  const headers = ['Name','Adresse','Telefon','Website','Bewertung','Status'];
-  const rows = leads.map(l => [l.name, l.address, l.phone, l.website, l.rating, l.status]);
-  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `praxisnova_leads_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  toast('CSV exportiert!');
-}
-
-// ============================================================
-// TABS
-// ============================================================
-function switchTab(name, el) {
+function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
+  const idx = ['leads','crm','sequences','guide'].indexOf(name);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'crm') updateCRMTab();
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function showLoading() {
+  document.getElementById('leadResults').innerHTML = `<div class="empty-state"><div style="font-size:36px;">🔍</div><h3 style="margin-top:12px;">Suche läuft...</h3><p>Google Maps wird durchsucht</p></div>`;
+  document.getElementById('resultsCount').style.display = 'none';
+}
 
-// ============================================================
-// INIT LOG
-// ============================================================
-log('🚀 PraxisNova Sales Automation bereit', 'ok');
-log(`🔑 Google Places API: ${CONFIG.GOOGLE_PLACES_KEY.substring(0,12)}...`, 'info');
-log(`🔑 HubSpot Portal: ${CONFIG.HUBSPOT_PORTAL}`, 'info');
-log(`🔑 Brevo: ${CONFIG.BREVO_KEY.substring(0,16)}...`, 'info');
-log(`📅 Calendly: ${CONFIG.CALENDLY}`, 'info');
+function showError(msg) {
+  document.getElementById('leadResults').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>${msg}</h3></div>`;
+}
+
+let toastTimeout;
+function showToast(msg, isError=false) {
+  let toast = document.getElementById('toast');
+  if (!toast) { toast = document.createElement('div'); toast.id = 'toast'; toast.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;transition:opacity 0.3s;'; document.body.appendChild(toast); }
+  toast.style.background = isError ? '#2a1a1a' : '#0f2a1a';
+  toast.style.border = `1px solid ${isError ? '#dc2626' : '#16a34a'}`;
+  toast.style.color = isError ? '#f87171' : '#4ade80';
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+async function syncUnsubscribes() {
+  if (!config.brevoKey) return;
+  try {
+    const res = await fetch('https://api.brevo.com/v3/contacts?limit=100&sort=desc&emailBlacklisted=true', { headers: { 'api-key': config.brevoKey } });
+    const data = await res.json();
+    if (data.contacts && data.contacts.length) {
+      const contacts = getContacts();
+      let changed = false;
+      data.contacts.forEach(c => {
+        if (c.email && contacts[c.email.toLowerCase()] && contacts[c.email.toLowerCase()].status !== 'unsubscribed') {
+          contacts[c.email.toLowerCase()].status = 'unsubscribed';
+          changed = true;
+        }
+      });
+      if (changed) saveContacts(contacts);
+    }
+  } catch(e) {}
+}
+
+loadConfig();
+updateStats();
+syncUnsubscribes();
 </script>
 </body>
 </html>
